@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Cashflow — Add Entry</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="styles.css" />
+  <script type="module" src="js/add.js" defer></script>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div>
+        <h1>💸 Cashflow — Add Entry</h1>
+        <small>Add cash in/out record with details</small>
+      </div>
+      <nav class="nav">
+        <a href="index.html" class="ghost">Dashboard</a>
+        <a href="add.html">Add Entry</a>
+        <a href="entries.html" class="ghost">Entries</a>
+      </nav>
+    </div>
+
+    <section class="panel">
+      <h3>New Entry</h3>
+      <form id="entryForm">
+        <div class="grid">
+          <label>
+            <span>Date</span>
+            <input type="date" id="date" required />
+          </label>
+
+          <label>
+            <span>Flow (IN / OUT)</span>
+            <select id="flow" required>
+              <option value="IN">IN (Money In)</option>
+              <option value="OUT">OUT (Money Out)</option>
+            </select>
+          </label>
+
+          <label>
+            <span>Amount (₹)</span>
+            <input type="number" id="amount" step="0.01" min="0.01" placeholder="0.00" required />
+          </label>
+
+          <label>
+            <span>Person (Entry Given By)</span>
+            <input type="text" id="person" placeholder="e.g., Rahul Sharma" />
+          </label>
+
+          <label>
+            <span>Mode of Payment</span>
+            <select id="mode">
+              <option>Cash</option>
+              <option>UPI</option>
+              <option>Card</option>
+              <option>Bank Transfer</option>
+              <option>Cheque</option>
+              <option>Other</option>
+            </select>
+          </label>
+
+          <label>
+            <span>Type / Category</span>
+            <select id="category">
+            
+            </select>
+          </label>
+
+          <label>
+            <span>Remarks</span>
+            <input type="text" id="remarks" placeholder="Optional remarks" />
+          </label>
+        </div>
+
+        <div class="actions">
+          <button type="submit">Save Entry</button>
+          <a class="ghost" href="entries.html">Go to Entries</a>
+        </div>
+      </form>
+    </section>
+  </div>
+</body>
+</html>

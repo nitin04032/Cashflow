@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Cashflow — Entries</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="styles.css" />
+  <script type="module" src="js/list.js" defer></script>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div>
+        <h1>💸 Cashflow — Entries</h1>
+        <small id="filterLabel" class="muted">Showing: All</small>
+      </div>
+      <nav class="nav">
+        <a href="index.html" class="ghost">Dashboard</a>
+        <a href="add.html">Add Entry</a>
+        <a href="entries.html" class="ghost">Entries</a>
+      </nav>
+    </div>
+
+    <!-- Filters -->
+    <section class="panel no-print">
+      <h3>Filters</h3>
+      <div class="filters">
+        <div class="quick-filters">
+          <a class="ghost" href="entries.html?mode=TODAY">Today</a>
+          <a class="ghost" href="entries.html?mode=MONTH">This Month</a>
+          <a class="ghost" href="entries.html?mode=ALL">All</a>
+        </div>
+        <div class="range-filters">
+  <label>
+    <span>Flow</span>
+    <select id="flowFilter">
+      <option value="ALL">All</option>
+      <option value="IN">IN only</option>
+      <option value="OUT">OUT only</option>
+    </select>
+  </label>
+</div>
+        <div class="print-actions">
+          <button id="openPrint">Open Print View</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Summary -->
+    <section class="cards">
+      <div class="card"><p>Opening Balance</p><h2 id="opening">₹0.00</h2></div>
+      <div class="card"><p>Total In (Filtered)</p><h2 id="totalIn">₹0.00</h2></div>
+      <div class="card"><p>Total Out (Filtered)</p><h2 id="totalOut">₹0.00</h2></div>
+      <div class="card"><p>Net (Filtered)</p><h2 id="net">₹0.00</h2></div>
+      <div class="card"><p>Closing Balance</p><h2 id="closing">₹0.00</h2></div>
+    </section>
+
+    <!-- Table -->
+    <section class="panel">
+      <div class="table-header">
+        <h3>Entries</h3>
+        <div class="table-actions no-print">
+          <button id="exportCsv" class="ghost">Export CSV</button>
+          <label class="import-label">Import CSV
+            <input type="file" id="importCsv" accept=".csv" hidden />
+          </label>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <table id="entriesTable">
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Person</th>
+              <th>Mode</th>
+              <th>Flow</th>
+              <th>Type/Category</th>
+              <th class="right">Amount</th>
+              <th>Remarks</th>
+              <th class="right">Balance</th>
+              <th class="no-print"></th>
+            </tr>
+          </thead>
+          <tbody id="rows"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <footer class="footer no-print"><small>Data stored locally (browser).</small></footer>
+  </div>
+</body>
+</html>

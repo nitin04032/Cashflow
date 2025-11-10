@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Cashflow — Print View</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="styles.css" />
+  <script type="module" src="js/print.js" defer></script>
+</head>
+<body>
+  <div class="container">
+    <div class="header no-print">
+      <div>
+        <h1>🖨️ Cashflow — Print View</h1>
+        <small id="filterLabel" class="muted">Showing: …</small>
+      </div>
+      <div class="nav">
+        <a class="ghost" href="entries.html">Back to Entries</a>
+        <a class="" href="#" id="doPrint">Print</a>
+      </div>
+    </div>
+
+    <section class="panel">
+      <h3>Daily Cash Book</h3>
+      <div class="cards">
+        <div class="card"><p>Opening</p><h2 id="opening">₹0.00</h2></div>
+        <div class="card"><p>Total In</p><h2 id="totalIn">₹0.00</h2></div>
+        <div class="card"><p>Total Out</p><h2 id="totalOut">₹0.00</h2></div>
+        <div class="card"><p>Net</p><h2 id="net">₹0.00</h2></div>
+        <div class="card"><p>Closing</p><h2 id="closing">₹0.00</h2></div>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Person</th>
+              <th>Mode</th>
+              <th>Flow</th>
+              <th>Type/Category</th>
+              <th class="right">Amount</th>
+              <th>Remarks</th>
+              <th class="right">Balance</th>
+            </tr>
+          </thead>
+          <tbody id="rows"></tbody>
+        </table>
+      </div>
+    </section>
+    <footer class="footer"><small>This view prints cleanly.</small></footer>
+  </div>
+</body>
+</html>

@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Cashflow — Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="styles.css" />
+  <script type="module" src="js/dashboard.js" defer></script>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div>
+        <h1>💸 Cashflow — Dashboard</h1>
+        <small>Overview of your cash book</small>
+      </div>
+      <nav class="nav">
+        <a href="index.html" class="ghost">Dashboard</a>
+        <a href="add.html">Add Entry</a>
+        <a href="entries.html" class="ghost">Entries</a>
+      </nav>
+    </div>
+
+    <section class="cards">
+      <div class="card">
+        <p>Today (IN)</p><h2 id="tdIn">₹0.00</h2>
+      </div>
+      <div class="card">
+        <p>Today (OUT)</p><h2 id="tdOut">₹0.00</h2>
+      </div>
+      <div class="card">
+        <p>This Month (Net)</p><h2 id="moNet">₹0.00</h2>
+      </div>
+      <div class="card">
+        <p>All-Time (Net)</p><h2 id="allNet">₹0.00</h2>
+      </div>
+      <div class="card">
+        <p>All-Time Closing Balance</p><h2 id="allClosing">₹0.00</h2>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h3>Quick Links</h3>
+      <div class="actions">
+        <a class="ghost" href="entries.html?mode=TODAY">Open Today</a>
+        <a class="ghost" href="entries.html?mode=MONTH">Open This Month</a>
+        <a class="ghost" href="entries.html?mode=ALL">Open All Entries</a>
+      </div>
+    </section>
+
+    <footer class="footer"><small>Data stored locally (browser).</small></footer>
+  </div>
+</body>
+</html>
