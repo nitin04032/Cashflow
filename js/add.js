@@ -1,6 +1,7 @@
 import { todayISO } from "./utils.js";
 import { loadEntries, saveEntries } from "./storage.js";
 
+// OUT categories unchanged
 const OUT_CATEGORIES = [
   "Bills Entry",
   "Supplier Payment",
@@ -12,7 +13,13 @@ const OUT_CATEGORIES = [
   "Cash Out Entry",
   "Other",
 ];
+
+// IN categories — added your requested types first
 const IN_CATEGORIES = [
+  "Entry Bills",             // your request
+  "Received from B2C",       // your request
+  "Received from B2B",       // your request
+  "Cash Entry",              // your request
   "Sales (Inflow)",
   "Customer Payment",
   "Refund Received",
@@ -28,8 +35,9 @@ function populateCategory(flow) {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-  // defaults
   document.getElementById("date").value = todayISO();
+
+  // ensure category options match initial flow
   populateCategory(document.getElementById("flow").value || "IN");
 
   // when flow changes, swap categories
@@ -37,7 +45,6 @@ document.addEventListener("DOMContentLoaded", () => {
     populateCategory(e.target.value);
   });
 
-  // save entry
   document.getElementById("entryForm").addEventListener("submit", (e) => {
     e.preventDefault();
 
@@ -45,6 +52,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const flow = document.getElementById("flow").value; // IN or OUT
     const amount = parseFloat(document.getElementById("amount").value || "0");
     const person = document.getElementById("person").value.trim();
+    const party  = document.getElementById("party").value.trim(); // NEW
     const mode = document.getElementById("mode").value;
     const category = document.getElementById("category").value;
     const remarks = document.getElementById("remarks").value.trim();
@@ -58,6 +66,7 @@ document.addEventListener("DOMContentLoaded", () => {
       flow: flow === "OUT" ? "OUT" : "IN",
       amount: amount.toFixed(2),
       person,
+      party,   // NEW
       mode,
       category,
       remarks,
@@ -67,6 +76,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // reset some fields
     document.getElementById("amount").value = "";
     document.getElementById("person").value = "";
+    document.getElementById("party").value = "";   // NEW
     document.getElementById("remarks").value = "";
 
     alert("Saved!");
