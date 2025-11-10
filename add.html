@@ -7,13 +7,16 @@
   <link rel="stylesheet" href="styles.css" />
   <script type="module" src="js/add.js" defer></script>
 </head>
+
 <body>
   <div class="container">
+
     <div class="header">
       <div>
         <h1>💸 Cashflow — Add Entry</h1>
         <small>Add cash in/out record with details</small>
       </div>
+
       <nav class="nav">
         <a href="index.html" class="ghost">Dashboard</a>
         <a href="add.html">Add Entry</a>
@@ -23,8 +26,10 @@
 
     <section class="panel">
       <h3>New Entry</h3>
+
       <form id="entryForm">
         <div class="grid">
+
           <label>
             <span>Date</span>
             <input type="date" id="date" required />
@@ -48,6 +53,12 @@
             <input type="text" id="person" placeholder="e.g., Rahul Sharma" />
           </label>
 
+          <!-- ✅ Party Name field added -->
+          <label>
+            <span>Party Name</span>
+            <input type="text" id="party" placeholder="e.g., ABC Traders / Mr. Verma" />
+          </label>
+
           <label>
             <span>Mode of Payment</span>
             <select id="mode">
@@ -63,7 +74,6 @@
           <label>
             <span>Type / Category</span>
             <select id="category">
-            
             </select>
           </label>
 
@@ -71,6 +81,7 @@
             <span>Remarks</span>
             <input type="text" id="remarks" placeholder="Optional remarks" />
           </label>
+
         </div>
 
         <div class="actions">
