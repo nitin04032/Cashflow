@@ -9,6 +9,7 @@
 </head>
 <body>
   <div class="container">
+
     <div class="header no-print">
       <div>
         <h1>🖨️ Cashflow — Print View</h1>
@@ -16,12 +17,13 @@
       </div>
       <div class="nav">
         <a class="ghost" href="entries.html">Back to Entries</a>
-        <a class="" href="#" id="doPrint">Print</a>
+        <a href="#" id="doPrint">Print</a>
       </div>
     </div>
 
     <section class="panel">
       <h3>Daily Cash Book</h3>
+
       <div class="cards">
         <div class="card"><p>Opening</p><h2 id="opening">₹0.00</h2></div>
         <div class="card"><p>Total In</p><h2 id="totalIn">₹0.00</h2></div>
@@ -30,7 +32,7 @@
         <div class="card"><p>Closing</p><h2 id="closing">₹0.00</h2></div>
       </div>
 
-      <div class="table-wrap">
+      <div class="table-wrap no-border">
         <table>
           <thead>
             <tr>
@@ -48,7 +50,18 @@
         </table>
       </div>
     </section>
-    <footer class="footer"><small>This view prints cleanly.</small></footer>
+
+    <footer class="footer">
+      <small>This view prints cleanly.</small>
+    </footer>
+
   </div>
+
+  <!-- ✅ Loader -->
+  <div class="app-loader" id="appLoader" aria-hidden="true">
+    <div class="app-spinner" role="status" aria-label="Loading"></div>
+  </div>
+  <script type="module" src="js/loader.js" defer></script>
+
 </body>
 </html>

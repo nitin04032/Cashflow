@@ -53,7 +53,6 @@
             <input type="text" id="person" placeholder="e.g., Rahul Sharma" />
           </label>
 
-          <!-- ✅ Party Name field added -->
           <label>
             <span>Party Name</span>
             <input type="text" id="party" placeholder="e.g., ABC Traders / Mr. Verma" />
@@ -73,8 +72,7 @@
 
           <label>
             <span>Type / Category</span>
-            <select id="category">
-            </select>
+            <select id="category"></select>
           </label>
 
           <label>
@@ -91,5 +89,12 @@
       </form>
     </section>
   </div>
+
+  <!-- ✅ Loader -->
+  <div class="app-loader" id="appLoader" aria-hidden="true">
+    <div class="app-spinner" role="status" aria-label="Loading"></div>
+  </div>
+  <script type="module" src="js/loader.js" defer></script>
+
 </body>
 </html>

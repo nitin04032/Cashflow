@@ -1,5 +1,5 @@
 import { todayISO } from "./utils.js";
-import { loadEntries, saveEntries } from "./storage.js";
+import { saveEntry } from "./api.js"; // Updated to use saveEntry from new API
 
 // OUT categories unchanged
 const OUT_CATEGORIES = [
@@ -16,10 +16,10 @@ const OUT_CATEGORIES = [
 
 // IN categories — added your requested types first
 const IN_CATEGORIES = [
-  "Entry Bills",             // your request
-  "Received from B2C",       // your request
-  "Received from B2B",       // your request
-  "Cash Entry",              // your request
+  "Entry Bills",
+  "Received from B2C",
+  "Received from B2B",
+  "Cash Entry",
   "Sales (Inflow)",
   "Customer Payment",
   "Refund Received",
@@ -45,40 +45,53 @@ document.addEventListener("DOMContentLoaded", () => {
     populateCategory(e.target.value);
   });
 
-  document.getElementById("entryForm").addEventListener("submit", (e) => {
+  document.getElementById("entryForm").addEventListener("submit", async (e) => { // Made async
     e.preventDefault();
 
     const date = document.getElementById("date").value || todayISO();
     const flow = document.getElementById("flow").value; // IN or OUT
     const amount = parseFloat(document.getElementById("amount").value || "0");
     const person = document.getElementById("person").value.trim();
-    const party  = document.getElementById("party").value.trim(); // NEW
+    const party  = document.getElementById("party").value.trim();
     const mode = document.getElementById("mode").value;
     const category = document.getElementById("category").value;
     const remarks = document.getElementById("remarks").value.trim();
 
     if (!amount || amount <= 0) { alert("Amount must be greater than 0"); return; }
+    
+    // Disable submit button during fetch
+    const submitBtn = document.querySelector("#entryForm button[type='submit']");
+    submitBtn.disabled = true;
 
-    const entries = loadEntries();
-    entries.push({
-      id: Date.now(),
+    const newEntry = {
+      // NOTE: We rely on the server (MySQL) to generate the ID
+      // id: Date.now(), // No longer needed for new entries
       date,
       flow: flow === "OUT" ? "OUT" : "IN",
-      amount: amount.toFixed(2),
+      amount: amount.toFixed(2), // Send as string for DB precision
       person,
-      party,   // NEW
+      party,
       mode,
       category,
       remarks,
-    });
-    saveEntries(entries);
+    };
+    
+    const saved = await saveEntry(newEntry); // Use new API function
 
-    // reset some fields
-    document.getElementById("amount").value = "";
-    document.getElementById("person").value = "";
-    document.getElementById("party").value = "";   // NEW
-    document.getElementById("remarks").value = "";
+    // Re-enable button
+    submitBtn.disabled = false;
 
-    alert("Saved!");
+    if (saved) {
+      // reset fields
+      document.getElementById("amount").value = "";
+      document.getElementById("person").value = "";
+      document.getElementById("party").value = "";
+      document.getElementById("remarks").value = "";
+
+      alert("Saved successfully to MySQL!");
+    } else {
+        // Error alert is handled inside saveEntry, but an extra check can be here
+        alert("Failed to save entry. Please try again.");
+    }
   });
 });

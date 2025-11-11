@@ -1,19 +1,22 @@
 /* =========================
-   Cashflow – global styles
+   Cashflow – NEW & IMPROVED styles
    ========================= */
 
-/* Theme tokens */
+/* Theme tokens - Brighter, modern palette */
 :root{
-  --bg:#f8fafc;
-  --panel:#ffffff;
-  --text:#0f172a;
-  --muted:#64748b;
-  --border:#e2e8f0;
-  --green:#059669;
-  --red:#dc2626;
+  --bg: #f0f4f8; /* Softer background */
+  --panel: #ffffff;
+  --text: #1e293b;
+  --muted: #64748b;
+  --border: #cbd5e1; /* Lighter border */
+  --accent: #10b981; /* Emerald Green (Vibrant) */
+  --accent-ink: #fff;
+  --accent-light: #d1fae5;
+  --green: #059669;
+  --red: #ef4444;
 
-  --shadow:0 1px 2px rgba(0,0,0,.04);
-  --radius:12px;
+  --shadow: 0 4px 12px rgba(0, 0, 0, 0.08), 0 1px 4px rgba(0, 0, 0, 0.04); /* Softer, layered shadow */
+  --radius: 12px;
 }
 
 /* Base reset */
@@ -25,156 +28,260 @@ body{
   background:var(--bg);
   -webkit-font-smoothing:antialiased;
   -moz-osx-font-smoothing:grayscale;
-  font: 14px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,Ubuntu,"Helvetica Neue",Arial,sans-serif;
+  font: 15px/1.6 'Inter', system-ui,-apple-system,"Segoe UI",Roboto,Ubuntu,"Helvetica Neue",Arial,sans-serif; /* Slightly better default font/size */
 }
 
-/* Layout */
-.container{max-width:1100px;margin:0 auto;padding:16px}
+/* Full page layout */
+.container{
+  max-width:1200px;
+  margin:0 auto;
+  padding:24px clamp(16px, 3vw, 32px); /* Increased padding */
+  min-height:100dvh;
+  display:flex;
+  flex-direction:column;
+  gap:20px; /* Increased gap */
+}
 .header{
-  margin:8px 0 20px;
+  margin:4px 0 4px;
   display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;
 }
-.header h1{margin:0;font-size:22px}
+.header h1{margin:0;font-size:24px}
 .header small{color:var(--muted)}
 
-/* Top nav buttons (links that look like buttons) */
-.nav{display:flex;gap:8px;flex-wrap:wrap}
+/* Top nav buttons - Modernized */
+.nav{display:flex;gap:10px;flex-wrap:wrap}
 .nav a{
   text-decoration:none;
-  padding:10px 12px;
-  border:1px solid var(--border);
-  border-radius:10px;
-  background:#0f172a;color:#fff;
-  transition:opacity .15s ease;
+  padding:10px 18px; /* Wider padding */
+  border:none;
+  border-radius:999px; /* Pill shape */
+  background:var(--accent);color:var(--accent-ink);
+  transition:all .2s ease; /* Smoother transitions */
+  box-shadow:0 4px 6px rgba(16, 185, 129, 0.2); /* Accent shadow */
+  font-weight: 500;
 }
-.nav a:hover{opacity:.92}
-.nav a.ghost{background:transparent;color:var(--text)}
+.nav a:hover{
+    opacity:.98;
+    transform:translateY(-2px); /* Better lift effect */
+    box-shadow:0 6px 15px rgba(16, 185, 129, 0.3);
+}
+.nav a:active{transform:translateY(0)}
+.nav a.ghost{
+    background:transparent;
+    color:var(--text);
+    box-shadow:none;
+    border:1px solid var(--border);
+    padding:9px 17px;
+}
+.nav a.ghost:hover {
+    background: var(--accent-light);
+    transform: translateY(-1px);
+    box-shadow: none;
+}
+.nav a:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
 
-/* Cards row — responsive and no overflow */
+/* Cards - Enhanced Visuals */
 .cards{
   display:grid;
   grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  gap:12px;
-  margin-bottom:16px;
+  gap:16px; /* Increased gap */
 }
 .card{
   background:var(--panel);
-  padding:16px;
+  padding:20px; /* Increased padding */
   border:1px solid var(--border);
   border-radius:var(--radius);
   box-shadow:var(--shadow);
+  transform:translateY(0);
+  transition:transform .2s ease, box-shadow .3s ease;
+  overflow: hidden;
+  position: relative;
 }
-.card p{margin:0;color:var(--muted)}
-.card h2{margin:8px 0 0;font-size:22px}
+.card:hover{
+    transform:translateY(-3px); /* Pronounced lift */
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+}
+.card p{margin:0;color:var(--muted);font-size:13px}
+.card h2{margin:8px 0 0;font-size:28px;font-weight:700}
+/* Color accents for key cards (Optional, requires JS for dynamic colors) */
+.card:nth-child(5) { border-left: 5px solid var(--accent); } /* Closing Balance */
+.card:nth-child(4) { border-left: 5px solid var(--green); } /* Net */
+
 
 /* Panels / sections */
 .panel{
   background:var(--panel);
   border:1px solid var(--border);
   border-radius:var(--radius);
-  padding:16px;
-  margin-bottom:16px;
+  padding:24px; /* Increased padding */
   box-shadow:var(--shadow);
 }
-.panel h3{margin:0 0 12px}
+.panel h3{margin:0 0 16px;font-size:18px;border-bottom: 1px solid var(--border);padding-bottom: 10px;}
 
-/* Form grid — responsive columns that don’t squeeze */
+/* Form grid */
 .grid{
   display:grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  gap:12px;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); /* Wider minimum width */
+  gap:16px;
 }
-label{display:flex;flex-direction:column;gap:6px;margin-bottom:8px}
-label span{font-size:12px;color:var(--muted)}
+label{display:flex;flex-direction:column;gap:8px;margin-bottom:8px}
+label span{font-size:13px;color:var(--muted);font-weight: 500;}
 input,select,button{font:inherit}
 input,select{
-  padding:10px 12px;
+  padding:12px 14px; /* Better size */
   border:1px solid var(--border);
-  border-radius:10px;
+  border-radius:8px;
   background:#fff;
   width:100%;
+  transition: border-color .2s ease;
+}
+input:focus,select:focus{
+    outline:none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 30%, transparent); /* Custom focus ring */
 }
 
-/* Buttons */
-.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px}
-button{
-  padding:10px 14px;
-  border:1px solid var(--border);
-  border-radius:10px;
-  background:#0f172a;color:#fff;
+/* Buttons - Unified and improved styles */
+.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
+button,a.button{
+  text-decoration:none;
+  display:inline-flex;align-items:center;justify-content:center;
+  padding:12px 20px;
+  border:none; /* No border for main buttons */
+  border-radius:8px;
+  background:var(--accent);color:var(--accent-ink);
   cursor:pointer;
-  transition:transform .02s ease, opacity .15s ease;
+  transition:all .2s ease;
+  box-shadow:0 4px 6px rgba(16, 185, 129, 0.2);
+  font-weight: 600;
 }
-button:hover{opacity:.95}
-button:active{transform:translateY(1px)}
-button.ghost{background:transparent;color:var(--text)}
-button.danger{background:var(--red);border-color:#fca5a5}
-
-.muted{color:var(--muted)}
+button:hover,a.button:hover{
+    opacity:.98;
+    transform:translateY(-1px);
+    box-shadow:0 6px 15px rgba(16, 185, 129, 0.3);
+}
+button:active,a.button:active{transform:translateY(0)}
+button:focus-visible,a.button:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+button.ghost,a.button.ghost{
+    background:transparent;
+    color:var(--text);
+    box-shadow:none;
+    border:1px solid var(--border);
+    padding:11px 19px;
+}
+button.ghost:hover,a.button.ghost:hover {
+    background: var(--accent-light);
+    border-color: var(--accent-light);
+    transform: translateY(-1px);
+}
+button.danger{background:var(--red);box-shadow:0 4px 6px rgba(239, 68, 68, 0.2);color:#fff}
 
 /* Filters layout */
 .filters{
   display:grid;
-  gap:12px;
-  grid-template-columns: 1fr 1fr auto;
-  align-items:end;
+  gap:16px;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); /* Simplified and responsive */
+  align-items:center;
 }
-.range-filters{display:flex;gap:8px;align-items:end;flex-wrap:wrap}
-.quick-filters{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
-.print-actions{text-align:right}
+.range-filters, .quick-filters, .print-actions{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
 
 /* Table wrapper keeps X-scroll on small screens */
-.table-wrap{overflow:auto;border-radius:10px}
+.table-wrap{overflow:auto;border-radius:var(--radius);border:1px solid var(--border);}
 
-/* Table */
-table{width:100%;border-collapse:collapse;min-width:700px}
+/* Table - Cleaned up */
+table{width:100%;border-collapse:collapse;min-width:900px}
 th,td{
   border-top:1px solid var(--border);
-  padding:10px 8px;
+  padding:12px 10px; /* Increased padding */
   text-align:left;
-  vertical-align:top;
+  vertical-align:middle;
+  font-size: 14px;
 }
 thead th{
   position:sticky;top:0;z-index:1;
-  background:#f1f5f9;
+  background:#e2e8f0; /* Light header background */
+  font-weight: 600;
 }
-tbody tr:hover{background:#fafafa}
+tbody tr:hover{background:var(--accent-light);}
 tbody tr:nth-child(even){background:#fcfcfc}
 .right{text-align:right}
 
 /* Badges for IN/OUT */
-.badge-in{color:var(--green);font-weight:600}
-.badge-out{color:var(--red);font-weight:600}
+.badge-in{
+    color:var(--green);
+    font-weight:700;
+    padding: 3px 8px;
+    background: #d1fae5;
+    border-radius: 4px;
+}
+.badge-out{
+    color:var(--red);
+    font-weight:700;
+    padding: 3px 8px;
+    background: #fee2e2;
+    border-radius: 4px;
+}
 
-/* Footer */
-.footer{text-align:center;color:var(--muted);margin:12px 0 24px}
+/* Footer sticks at bottom nicely */
+.footer{margin-top:auto;text-align:center;color:var(--muted);padding:16px 0}
 
-/* Utilities */
-.no-print{}
+/* Subtle fade-in on mount */
+@keyframes fadeInUp{
+  from{opacity:0;transform:translateY(8px)}
+  to{opacity:1;transform:translateY(0)}
+}
+.container > .header,
+.container > .cards,
+.container > .panel{animation:fadeInUp .4s ease both}
+.container > .cards > .card {
+    opacity: 0;
+    animation: fadeInUp .4s ease-out forwards;
+    animation-delay: calc(var(--card-index) * 0.05s); /* Stagger cards */
+}
+/* Use CSS custom properties for staggered delay (add to HTML/JS) */
+
+/* Loader overlay - Unchanged but using new colors */
+.app-loader{
+  position:fixed;inset:0;display:grid;place-items:center;
+  background:rgba(255,255,255,.9);backdrop-filter:saturate(1.2) blur(3px); /* Stronger blur */
+  z-index:1000;opacity:0;pointer-events:none;transition:opacity .3s ease;
+}
+.app-loader.show{opacity:1;pointer-events:auto}
+.app-spinner{
+  width:50px;height:50px;border-radius:999px;border:4px solid var(--border);border-top-color:var(--accent); /* Larger spinner */
+  animation:spin 1s cubic-bezier(0.5, 0, 0.5, 1) infinite; /* Smoother spin */
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* Motion safety */
+@media (prefers-reduced-motion: reduce){
+  *{animation-duration:.001ms !important; animation-iteration-count:1 !important; transition-duration:.001ms !important}
+  .app-spinner{animation:none}
+}
 
 /* Responsive tweaks */
 @media (max-width:900px){
   .filters{grid-template-columns:1fr}
-  table{min-width:650px}
+  table{min-width:800px}
 }
 @media (max-width:600px){
-  table{min-width:600px}
-  .header h1{font-size:20px}
+  table{min-width:650px}
+  .header h1{font-size:22px}
+  .panel{padding:16px;}
 }
 
-/* Print-friendly rules */
+/* Print-friendly rules - Adjusted for new header color */
 @media print{
   .no-print{display:none !important}
   body{background:#fff;color:#000}
   .container{max-width:100%;padding:8mm}
   .panel,.card{border:1px solid #000;box-shadow:none}
   thead th{
-    background:#e5e7eb;
+    background:#e2e8f0; /* Use light grey for print header */
     -webkit-print-color-adjust:exact;
     print-color-adjust:exact;
   }
   table{font-size:12px}
-  /* Avoid breaking rows across pages */
   table, thead, tbody, tr, td, th{page-break-inside:avoid}
   tr{break-inside:avoid; break-after:auto}
 }

@@ -9,6 +9,7 @@
 </head>
 <body>
   <div class="container">
+
     <div class="header">
       <div>
         <h1>💸 Cashflow — Entries</h1>
@@ -21,32 +22,34 @@
       </nav>
     </div>
 
-    <!-- Filters -->
     <section class="panel no-print">
       <h3>Filters</h3>
       <div class="filters">
+
         <div class="quick-filters">
           <a class="ghost" href="entries.html?mode=TODAY">Today</a>
           <a class="ghost" href="entries.html?mode=MONTH">This Month</a>
           <a class="ghost" href="entries.html?mode=ALL">All</a>
         </div>
+
         <div class="range-filters">
-  <label>
-    <span>Flow</span>
-    <select id="flowFilter">
-      <option value="ALL">All</option>
-      <option value="IN">IN only</option>
-      <option value="OUT">OUT only</option>
-    </select>
-  </label>
-</div>
+          <label>
+            <span>Flow</span>
+            <select id="flowFilter">
+              <option value="ALL">All</option>
+              <option value="IN">IN only</option>
+              <option value="OUT">OUT only</option>
+            </select>
+          </label>
+        </div>
+
         <div class="print-actions">
           <button id="openPrint">Open Print View</button>
         </div>
+
       </div>
     </section>
 
-    <!-- Summary -->
     <section class="cards">
       <div class="card"><p>Opening Balance</p><h2 id="opening">₹0.00</h2></div>
       <div class="card"><p>Total In (Filtered)</p><h2 id="totalIn">₹0.00</h2></div>
@@ -55,7 +58,6 @@
       <div class="card"><p>Closing Balance</p><h2 id="closing">₹0.00</h2></div>
     </section>
 
-    <!-- Table -->
     <section class="panel">
       <div class="table-header">
         <h3>Entries</h3>
@@ -66,6 +68,7 @@
           </label>
         </div>
       </div>
+
       <div class="table-wrap">
         <table id="entriesTable">
           <thead>
@@ -86,7 +89,17 @@
       </div>
     </section>
 
-    <footer class="footer no-print"><small>Data stored locally (browser).</small></footer>
+    <footer class="footer no-print">
+      <small>Data stored locally (browser).</small>
+    </footer>
+
   </div>
+
+  <!-- ✅ Loader -->
+  <div class="app-loader" id="appLoader" aria-hidden="true">
+    <div class="app-spinner" role="status" aria-label="Loading"></div>
+  </div>
+  <script type="module" src="js/loader.js" defer></script>
+
 </body>
 </html>

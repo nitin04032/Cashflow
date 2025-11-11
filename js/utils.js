@@ -7,15 +7,18 @@ export function formatDate(iso){
   const d = new Date(iso);
   return d.toLocaleDateString("en-GB", { day:"2-digit", month:"2-digit", year:"numeric" });
 }
+
+// ✅ FIX: use e.flow (IN/OUT), not e.type
 export function computeOpeningBalance(entries, from){
   if (!from) return 0;
   return entries
     .filter(e => e.date < from)
-    .reduce((bal,e) => bal + (e.type === "IN" ? Number(e.amount) : -Number(e.amount)), 0);
+    .reduce((bal,e) => bal + (e.flow === "IN" ? Number(e.amount) : -Number(e.amount)), 0);
 }
+
 export function computeTotals(entries){
-  const totalIn  = entries.filter(e=>e.type==="IN").reduce((s,e)=>s+Number(e.amount),0);
-  const totalOut = entries.filter(e=>e.type==="OUT").reduce((s,e)=>s+Number(e.amount),0);
+  const totalIn  = entries.filter(e=>e.flow==="IN").reduce((s,e)=>s+Number(e.amount),0);
+  const totalOut = entries.filter(e=>e.flow==="OUT").reduce((s,e)=>s+Number(e.amount),0);
   return { totalIn, totalOut, net: totalIn - totalOut };
 }
 export function sortAscForBalance(rows){

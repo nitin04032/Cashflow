@@ -9,6 +9,7 @@
 </head>
 <body>
   <div class="container">
+
     <div class="header">
       <div>
         <h1>💸 Cashflow — Dashboard</h1>
@@ -48,7 +49,17 @@
       </div>
     </section>
 
-    <footer class="footer"><small>Data stored locally (browser).</small></footer>
+    <footer class="footer">
+      <small>Data stored locally (browser).</small>
+    </footer>
+
   </div>
+
+  <!-- ✅ Loader -->
+  <div class="app-loader" id="appLoader" aria-hidden="true">
+    <div class="app-spinner" role="status" aria-label="Loading"></div>
+  </div>
+  <script type="module" src="js/loader.js" defer></script>
+
 </body>
 </html>
