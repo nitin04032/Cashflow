@@ -5,34 +5,38 @@
   <title>Cashflow — Dashboard</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="stylesheet" href="styles.css" />
-  <!-- Supabase CDN -->
+  <!-- Supabase (kept for other scripts that need it) -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-  <!-- Chart.js CDN -->
+  <!-- Chart.js -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-  <script type="module" src="js/dashboard.js" defer></script>
+  <!-- App scripts -->
   <script type="module" src="js/auth-guard.js" defer></script>
+  <script type="module" src="js/dashboard.js" defer></script>
+  <script type="module" src="js/loader.js" defer></script>
 </head>
 <body>
-  <div class="container">
+  <div class="container" id="app">
 
-    <div class="header">
+    <!-- Header -->
+    <header class="header" role="banner">
       <div>
         <h1>💸 Cashflow — Dashboard</h1>
-        <small>Overview of your cash book</small>
+        <small class="muted">Overview of your cash book</small>
       </div>
-      <nav class="nav">
-        <a href="index.html" class="ghost">Dashboard</a>
-        <a href="add.html">Add Entry</a>
+
+      <nav class="nav" role="navigation" aria-label="Main">
+        <a href="index.html" class="ghost" aria-current="page">Dashboard</a>
+        <a href="add.html" class="button">Add Entry</a>
         <a href="entries.html" class="ghost">Entries</a>
       </nav>
-    </div>
+    </header>
 
     <!-- Filters / Controls -->
-    <section class="panel no-print" style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
-      <div style="display:flex;gap:8px;align-items:center;">
+    <section class="panel no-print" aria-label="Filters">
+      <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;">
         <label style="display:flex;flex-direction:column;">
           <span style="font-size:12px;color:#64748b">Range</span>
-          <select id="dashRange" style="min-width:160px;padding:8px;border-radius:8px;border:1px solid #e2e8f0">
+          <select id="dashRange" aria-label="Select range">
             <option value="MONTH">This Month</option>
             <option value="YEAR">Last 12 Months</option>
             <option value="ALL">All Time</option>
@@ -42,82 +46,200 @@
 
         <label style="display:flex;flex-direction:column;">
           <span style="font-size:12px;color:#64748b">From</span>
-          <input type="date" id="dashFrom" />
+          <input type="date" id="dashFrom" aria-label="From date" />
         </label>
+
         <label style="display:flex;flex-direction:column;">
           <span style="font-size:12px;color:#64748b">To</span>
-          <input type="date" id="dashTo" />
+          <input type="date" id="dashTo" aria-label="To date" />
         </label>
 
         <button id="dashApply" class="ghost">Apply</button>
         <button id="dashReset" class="ghost">Reset</button>
-      </div>
 
-      <div style="margin-left:auto;display:flex;gap:8px;align-items:center;">
-        <label class="ghost" style="display:flex;align-items:center;gap:8px;padding:8px 12px;">
-          Show categories for
-          <select id="catFlow" style="border:none;background:transparent;padding:4px;">
-            <option value="IN">IN</option>
-            <option value="OUT">OUT</option>
-            <option value="ALL">ALL</option>
-          </select>
-        </label>
+        <div style="margin-left:auto;display:flex;gap:8px;align-items:center;">
+          <label style="display:flex;flex-direction:column;align-items:flex-end;">
+            <span style="font-size:12px;color:#64748b">Show categories for</span>
+            <select id="catFlow" aria-label="Show categories for">
+              <option value="IN">IN</option>
+              <option value="OUT">OUT</option>
+              <option value="ALL">ALL</option>
+            </select>
+          </label>
+        </div>
       </div>
     </section>
 
     <!-- Top cards -->
-    <section class="cards">
-      <div class="card"><p>Today (IN)</p><h2 id="tdIn">₹0.00</h2></div>
-      <div class="card"><p>Today (OUT)</p><h2 id="tdOut">₹0.00</h2></div>
-      <div class="card"><p>This Month (Net)</p><h2 id="moNet">₹0.00</h2></div>
-      <div class="card"><p>All-Time (Net)</p><h2 id="allNet">₹0.00</h2></div>
-      <div class="card"><p>All-Time Closing Balance</p><h2 id="allClosing">₹0.00</h2></div>
+    <section class="cards" aria-label="Top metrics">
+      <!-- Card 1 -->
+      <div class="card card-metric" style="--card-index:0" role="group" aria-label="Today in">
+        <div class="card-row">
+          <div>
+            <p class="card-label">Today (IN)</p>
+            <h2 id="tdIn" class="card-value">₹0.00</h2>
+            <div class="card-meta">
+              <span id="tdInChange" class="trend up" aria-hidden="true">—</span>
+              <small class="muted">vs yesterday</small>
+            </div>
+          </div>
+          <div class="card-spark">
+            <canvas id="sparkTdIn" width="120" height="36" aria-hidden="true"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 2 -->
+      <div class="card card-metric" style="--card-index:1" role="group" aria-label="Today out">
+        <div class="card-row">
+          <div>
+            <p class="card-label">Today (OUT)</p>
+            <h2 id="tdOut" class="card-value">₹0.00</h2>
+            <div class="card-meta">
+              <span id="tdOutChange" class="trend down" aria-hidden="true">—</span>
+              <small class="muted">vs yesterday</small>
+            </div>
+          </div>
+          <div class="card-spark">
+            <canvas id="sparkTdOut" width="120" height="36" aria-hidden="true"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 3 -->
+      <div class="card card-metric" style="--card-index:2" role="group" aria-label="This month net">
+        <div class="card-row">
+          <div>
+            <p class="card-label">This Month (Net)</p>
+            <h2 id="moNet" class="card-value">₹0.00</h2>
+            <div class="card-meta">
+              <small class="muted">Performance</small>
+            </div>
+          </div>
+          <div class="card-spark">
+            <canvas id="sparkMoNet" width="120" height="36" aria-hidden="true"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 4 -->
+      <div class="card card-metric" style="--card-index:3" role="group" aria-label="All time net">
+        <div class="card-row">
+          <div>
+            <p class="card-label">All-Time (Net)</p>
+            <h2 id="allNet" class="card-value">₹0.00</h2>
+            <div class="card-meta">
+              <small class="muted">Since inception</small>
+            </div>
+          </div>
+          <div class="card-spark">
+            <canvas id="sparkAllNet" width="120" height="36" aria-hidden="true"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 5 -->
+      <div class="card card-metric" style="--card-index:4" role="group" aria-label="Closing balance">
+        <div class="card-row">
+          <div>
+            <p class="card-label">All-Time Closing Balance</p>
+            <h2 id="allClosing" class="card-value">₹0.00</h2>
+            <div class="card-meta">
+              <small class="muted">Current balance</small>
+            </div>
+          </div>
+          <div class="card-spark">
+            <canvas id="sparkClosing" width="120" height="36" aria-hidden="true"></canvas>
+          </div>
+        </div>
+      </div>
     </section>
 
-    <!-- Charts grid -->
-    <section class="panel charts">
-      <div style="display:flex;align-items:center;justify-content:space-between;">
+    <!-- Charts -->
+    <section class="panel charts" aria-label="Financial charts">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
         <h3>Financial Charts</h3>
         <small class="muted">Interactive charts — hover for details</small>
       </div>
 
       <div class="charts-grid">
-        <div class="chart-card">
+        <div class="chart-card" aria-label="Running balance chart">
           <h4>Running Balance</h4>
-          <canvas id="balanceChart" height="160"></canvas>
+          <div class="chart-wrap">
+            <canvas id="balanceChart" aria-label="Running balance chart" role="img"></canvas>
+          </div>
         </div>
 
-        <div class="chart-card">
+        <div class="chart-card" aria-label="Monthly IN/OUT chart">
           <h4>Monthly IN / OUT (last 12 months)</h4>
-          <canvas id="monthlyChart" height="160"></canvas>
+          <div class="chart-wrap">
+            <canvas id="monthlyChart" aria-label="Monthly in out chart" role="img"></canvas>
+          </div>
         </div>
 
-        <div class="chart-card">
+        <div class="chart-card" aria-label="Category breakdown">
           <h4>Category Breakdown</h4>
-          <canvas id="categoryChart" height="160"></canvas>
+          <div class="chart-wrap">
+            <canvas id="categoryChart" aria-label="Category breakdown chart" role="img"></canvas>
+          </div>
         </div>
       </div>
     </section>
 
-    <section class="panel">
-      <h3>Quick Links</h3>
+    <!-- Quick Links -->
+    <section class="panel no-print" aria-label="Quick links">
+      <h3 style="margin-top:0">Quick Links</h3>
       <div class="actions">
         <a class="ghost" href="entries.html?mode=TODAY">Open Today</a>
         <a class="ghost" href="entries.html?mode=MONTH">Open This Month</a>
         <a class="ghost" href="entries.html?mode=ALL">Open All Entries</a>
+        <button id="exportDash" class="ghost" style="margin-left:auto">Export Dashboard CSV</button>
       </div>
     </section>
 
     <footer class="footer">
       <small>Data stored in Supabase.</small>
     </footer>
-
   </div>
+
+  <!-- Global Toast -->
+  <div id="toast" class="toast" aria-live="polite"></div>
 
   <!-- Loader -->
   <div class="app-loader" id="appLoader" aria-hidden="true">
     <div class="app-spinner" role="status" aria-label="Loading"></div>
   </div>
-  <script type="module" src="js/loader.js" defer></script>
+
+  <!-- Small inline helper: sparkline drawer used by dashboard.js if present -->
+  <script>
+    window.drawSpark = function(canvasId, values) {
+      try {
+        const c = document.getElementById(canvasId);
+        if (!c || !values || !values.length) return;
+        const ctx = c.getContext('2d');
+        const w = c.width = c.clientWidth; // make canvas pixel size match display
+        const h = c.height = c.clientHeight || 36;
+        ctx.clearRect(0,0,w,h);
+        const max = Math.max(...values), min = Math.min(...values);
+        ctx.beginPath();
+        values.forEach((v,i)=>{
+          const x = (i/(values.length-1 || 1))*w;
+          const y = h - ((v - min) / (max - min || 1)) * h;
+          if (i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+        });
+        ctx.strokeStyle = '#10b981';
+        ctx.lineWidth = 1.6;
+        ctx.stroke();
+        ctx.lineTo(w,h); ctx.lineTo(0,h); ctx.closePath();
+        ctx.fillStyle = 'rgba(16,185,129,0.06)';
+        ctx.fill();
+      } catch (e) { console.warn('drawSpark error', e); }
+    };
+
+    // Trigger a small resize event after load to help Chart.js compute sizes
+    window.addEventListener('load', () => {
+      setTimeout(()=> window.dispatchEvent(new Event('resize')), 120);
+    });
+  </script>
 </body>
 </html>
