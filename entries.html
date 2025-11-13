@@ -2,10 +2,12 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <title>Cashflow — Entries</title>
+  <title>Cashflow — Entries (Pro)</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="stylesheet" href="styles.css" />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
   <script type="module" src="js/list.js" defer></script>
+  <script type="module" src="js/auth-guard.js" defer></script>
 </head>
 <body>
   <div class="container">
@@ -22,84 +24,120 @@
       </nav>
     </div>
 
-    <section class="panel no-print">
-      <h3>Filters</h3>
-      <div class="filters">
+    <!-- Controls -->
+    <section class="panel no-print" aria-label="Filters and actions">
+      <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center;">
+        <input id="q" placeholder="Search person / party / category / remarks..." style="flex:1;min-width:220px;padding:10px;border-radius:8px;border:1px solid var(--border)"/>
 
-        <div class="quick-filters">
-          <a class="ghost" href="entries.html?mode=TODAY">Today</a>
-          <a class="ghost" href="entries.html?mode=MONTH">This Month</a>
-          <a class="ghost" href="entries.html?mode=ALL">All</a>
-        </div>
+        <label>
+          <span class="muted tiny">Flow</span>
+          <select id="flowFilter" style="padding:8px;border-radius:8px;">
+            <option value="ALL">All</option>
+            <option value="IN">IN</option>
+            <option value="OUT">OUT</option>
+          </select>
+        </label>
 
-        <div class="range-filters">
-          <label>
-            <span>Flow</span>
-            <select id="flowFilter">
-              <option value="ALL">All</option>
-              <option value="IN">IN only</option>
-              <option value="OUT">OUT only</option>
-            </select>
-          </label>
-        </div>
+        <label>
+          <span class="muted tiny">From</span>
+          <input type="date" id="fromDate" />
+        </label>
+        <label>
+          <span class="muted tiny">To</span>
+          <input type="date" id="toDate" />
+        </label>
 
-        <div class="print-actions">
-          <button id="openPrint">Open Print View</button>
-        </div>
+        <label>
+          <span class="muted tiny">Rows</span>
+          <select id="pageSize">
+            <option>10</option>
+            <option selected>25</option>
+            <option>50</option>
+            <option>100</option>
+          </select>
+        </label>
 
-      </div>
-    </section>
-
-    <section class="cards">
-      <div class="card"><p>Opening Balance</p><h2 id="opening">₹0.00</h2></div>
-      <div class="card"><p>Total In (Filtered)</p><h2 id="totalIn">₹0.00</h2></div>
-      <div class="card"><p>Total Out (Filtered)</p><h2 id="totalOut">₹0.00</h2></div>
-      <div class="card"><p>Net (Filtered)</p><h2 id="net">₹0.00</h2></div>
-      <div class="card"><p>Closing Balance</p><h2 id="closing">₹0.00</h2></div>
-    </section>
-
-    <section class="panel">
-      <div class="table-header">
-        <h3>Entries</h3>
-        <div class="table-actions no-print">
+        <div style="margin-left:auto;display:flex;gap:8px;align-items:center;">
           <button id="exportCsv" class="ghost">Export CSV</button>
-          <label class="import-label">Import CSV
-            <input type="file" id="importCsv" accept=".csv" hidden />
-          </label>
+          <button id="bulkDelete" class="ghost danger" disabled>Delete Selected</button>
+          <button id="clearFilters" class="ghost">Clear</button>
         </div>
       </div>
+    </section>
 
-      <div class="table-wrap">
-        <table id="entriesTable">
+    <!-- Table & summary -->
+    <section class="panel">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+        <h3>Entries</h3>
+        <div class="muted tiny">Showing <span id="shownCount">0</span> of <span id="totalCount">0</span></div>
+      </div>
+
+      <div class="table-wrap pro-table" role="region" aria-label="Entries table">
+        <table id="entriesTable" class="full">
           <thead>
             <tr>
-              <th>Date</th>
-              <th>Person</th>
-              <th>Mode</th>
-              <th>Flow</th>
-              <th>Type/Category</th>
-              <th class="right">Amount</th>
+              <th><input type="checkbox" id="selectAll" aria-label="Select all rows" /></th>
+              <th data-sort="date" class="sortable">Date <span class="sort-ind"></span></th>
+              <th data-sort="person" class="sortable">Person <span class="sort-ind"></span></th>
+              <th data-sort="party" class="sortable">Party <span class="sort-ind"></span></th>
+              <th data-sort="mode" class="sortable">Mode <span class="sort-ind"></span></th>
+              <th data-sort="flow" class="sortable">Flow <span class="sort-ind"></span></th>
+              <th data-sort="category" class="sortable">Category <span class="sort-ind"></span></th>
+              <th data-sort="amount" class="sortable right">Amount <span class="sort-ind"></span></th>
               <th>Remarks</th>
               <th class="right">Balance</th>
-              <th class="no-print"></th>
+              <th class="no-print">Actions</th>
             </tr>
           </thead>
           <tbody id="rows"></tbody>
         </table>
       </div>
+
+      <!-- pagination -->
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-top:12px">
+        <div>
+          <button id="prevPage" class="ghost">Prev</button>
+          <button id="nextPage" class="ghost">Next</button>
+        </div>
+        <div class="muted tiny">Page <span id="curPage">1</span></div>
+      </div>
     </section>
 
     <footer class="footer no-print">
-      <small>Data stored locally (browser).</small>
+      <small>Data stored in Supabase.</small>
     </footer>
 
   </div>
 
-  <!-- ✅ Loader -->
+  <!-- Modals (View/Edit & Receipt) -->
+  <div id="modalOverlay" class="modal-overlay" aria-hidden="true">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <header>
+        <h3 id="modalTitle">Entry</h3>
+        <button id="modalClose" class="ghost">Close</button>
+      </header>
+      <div id="modalBody"></div>
+      <footer id="modalFooter"></footer>
+    </div>
+  </div>
+
+  <div id="receiptModal" class="modal-overlay" aria-hidden="true">
+    <div class="modal" role="dialog" aria-modal="true">
+      <header>
+        <h3>Receipt</h3>
+        <button id="receiptClose" class="ghost">Close</button>
+      </header>
+      <div id="receiptBody" style="display:flex;justify-content:center;align-items:center;min-height:240px"></div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div id="toast" class="toast" aria-live="polite"></div>
+
+  <!-- Loader -->
   <div class="app-loader" id="appLoader" aria-hidden="true">
     <div class="app-spinner" role="status" aria-label="Loading"></div>
   </div>
   <script type="module" src="js/loader.js" defer></script>
-
 </body>
 </html>

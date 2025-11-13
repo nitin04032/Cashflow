@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Cashflow — Login / Register</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="styles.css" />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script type="module" src="js/auth.js" defer></script>
+</head>
+<body>
+  <div class="container" style="max-width:880px;margin:36px auto;">
+    <div class="header" style="align-items:flex-start">
+      <div>
+        <h1>🔐 Cashflow — Account</h1>
+        <small id="sub" class="muted">Sign in, create an account, or reset password</small>
+      </div>
+      <nav class="nav" style="margin-left:auto">
+        <a href="index.html" class="ghost">Home</a>
+      </nav>
+    </div>
+
+    <section class="panel" style="display:grid;grid-template-columns:1fr 320px;gap:18px;align-items:start;">
+      <!-- Form Column -->
+      <div>
+        <div style="display:flex;gap:8px;margin-bottom:12px">
+          <button id="tabLogin" class="button">Login</button>
+          <button id="tabSignUp" class="ghost">Register</button>
+          <button id="tabForgot" class="ghost">Forgot password</button>
+        </div>
+
+        <form id="authForm">
+          <!-- login/register fields -->
+          <div id="commonFields">
+            <label>
+              <span>Email</span>
+              <input type="email" id="email" required autocomplete="email" />
+            </label>
+
+            <label id="passwordLabel">
+              <span>Password</span>
+              <input type="password" id="password" required autocomplete="current-password" />
+            </label>
+          </div>
+
+          <!-- Register-only -->
+          <div id="signupExtras" style="display:none">
+            <label>
+              <span>Confirm Password</span>
+              <input type="password" id="passwordConfirm" autocomplete="new-password" />
+            </label>
+            <label>
+              <span>Full name (optional)</span>
+              <input type="text" id="fullName" />
+            </label>
+          </div>
+
+          <!-- Forgot password view -->
+          <div id="forgotView" style="display:none">
+            <p class="muted">Enter your email — we'll send a reset link.</p>
+          </div>
+
+          <div style="display:flex;gap:8px;margin-top:12px;align-items:center">
+            <button id="submitBtn" type="submit" class="button">Sign in</button>
+            <button id="signOutBtn" type="button" class="ghost" style="display:none">Sign out</button>
+            <div id="authMsg" style="margin-left:8px;color:#475569"></div>
+          </div>
+        </form>
+      </div>
+
+      <!-- Right column: info & social (optional) -->
+      <aside>
+        <div class="panel small">
+          <h4>Why create an account?</h4>
+          <p class="muted tiny">Accounts let you save entries, receipts and access your cashbook across devices. Use the same email to sign in anywhere.</p>
+        </div>
+        <div class="panel small">
+          <h4>Need help?</h4>
+          <p class="muted tiny">If you don't receive emails, configure SMTP in Supabase Dashboard (Project → Settings → SMTP). Also make sure you added the correct redirect URL(s).</p>
+        </div>
+      </aside>
+    </section>
+  </div>
+
+  <script type="module" src="js/loader.js" defer></script>
+</body>
+</html>

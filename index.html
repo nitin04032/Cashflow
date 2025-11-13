@@ -5,7 +5,12 @@
   <title>Cashflow — Dashboard</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="stylesheet" href="styles.css" />
+  <!-- Supabase CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
   <script type="module" src="js/dashboard.js" defer></script>
+  <script type="module" src="js/auth-guard.js" defer></script>
 </head>
 <body>
   <div class="container">
@@ -22,21 +27,75 @@
       </nav>
     </div>
 
+    <!-- Filters / Controls -->
+    <section class="panel no-print" style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+      <div style="display:flex;gap:8px;align-items:center;">
+        <label style="display:flex;flex-direction:column;">
+          <span style="font-size:12px;color:#64748b">Range</span>
+          <select id="dashRange" style="min-width:160px;padding:8px;border-radius:8px;border:1px solid #e2e8f0">
+            <option value="MONTH">This Month</option>
+            <option value="YEAR">Last 12 Months</option>
+            <option value="ALL">All Time</option>
+            <option value="CUSTOM">Custom Range</option>
+          </select>
+        </label>
+
+        <label style="display:flex;flex-direction:column;">
+          <span style="font-size:12px;color:#64748b">From</span>
+          <input type="date" id="dashFrom" />
+        </label>
+        <label style="display:flex;flex-direction:column;">
+          <span style="font-size:12px;color:#64748b">To</span>
+          <input type="date" id="dashTo" />
+        </label>
+
+        <button id="dashApply" class="ghost">Apply</button>
+        <button id="dashReset" class="ghost">Reset</button>
+      </div>
+
+      <div style="margin-left:auto;display:flex;gap:8px;align-items:center;">
+        <label class="ghost" style="display:flex;align-items:center;gap:8px;padding:8px 12px;">
+          Show categories for
+          <select id="catFlow" style="border:none;background:transparent;padding:4px;">
+            <option value="IN">IN</option>
+            <option value="OUT">OUT</option>
+            <option value="ALL">ALL</option>
+          </select>
+        </label>
+      </div>
+    </section>
+
+    <!-- Top cards -->
     <section class="cards">
-      <div class="card">
-        <p>Today (IN)</p><h2 id="tdIn">₹0.00</h2>
+      <div class="card"><p>Today (IN)</p><h2 id="tdIn">₹0.00</h2></div>
+      <div class="card"><p>Today (OUT)</p><h2 id="tdOut">₹0.00</h2></div>
+      <div class="card"><p>This Month (Net)</p><h2 id="moNet">₹0.00</h2></div>
+      <div class="card"><p>All-Time (Net)</p><h2 id="allNet">₹0.00</h2></div>
+      <div class="card"><p>All-Time Closing Balance</p><h2 id="allClosing">₹0.00</h2></div>
+    </section>
+
+    <!-- Charts grid -->
+    <section class="panel charts">
+      <div style="display:flex;align-items:center;justify-content:space-between;">
+        <h3>Financial Charts</h3>
+        <small class="muted">Interactive charts — hover for details</small>
       </div>
-      <div class="card">
-        <p>Today (OUT)</p><h2 id="tdOut">₹0.00</h2>
-      </div>
-      <div class="card">
-        <p>This Month (Net)</p><h2 id="moNet">₹0.00</h2>
-      </div>
-      <div class="card">
-        <p>All-Time (Net)</p><h2 id="allNet">₹0.00</h2>
-      </div>
-      <div class="card">
-        <p>All-Time Closing Balance</p><h2 id="allClosing">₹0.00</h2>
+
+      <div class="charts-grid">
+        <div class="chart-card">
+          <h4>Running Balance</h4>
+          <canvas id="balanceChart" height="160"></canvas>
+        </div>
+
+        <div class="chart-card">
+          <h4>Monthly IN / OUT (last 12 months)</h4>
+          <canvas id="monthlyChart" height="160"></canvas>
+        </div>
+
+        <div class="chart-card">
+          <h4>Category Breakdown</h4>
+          <canvas id="categoryChart" height="160"></canvas>
+        </div>
       </div>
     </section>
 
@@ -50,16 +109,15 @@
     </section>
 
     <footer class="footer">
-      <small>Data stored locally (browser).</small>
+      <small>Data stored in Supabase.</small>
     </footer>
 
   </div>
 
-  <!-- ✅ Loader -->
+  <!-- Loader -->
   <div class="app-loader" id="appLoader" aria-hidden="true">
     <div class="app-spinner" role="status" aria-label="Loading"></div>
   </div>
   <script type="module" src="js/loader.js" defer></script>
-
 </body>
 </html>

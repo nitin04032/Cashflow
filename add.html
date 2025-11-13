@@ -2,10 +2,13 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <title>Cashflow — Add Entry</title>
+  <title>Cashflow — Add Entry (Pro)</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="stylesheet" href="styles.css" />
+  <!-- small extra styles for form pro (below we include those css snippets separately) -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
   <script type="module" src="js/add.js" defer></script>
+  <script type="module" src="js/auth-guard.js" defer></script>
 </head>
 
 <body>
@@ -13,8 +16,8 @@
 
     <div class="header">
       <div>
-        <h1>💸 Cashflow — Add Entry</h1>
-        <small>Add cash in/out record with details</small>
+        <h1>💸 Cashflow — Add Entry (Pro)</h1>
+        <small>Quickly record money in/out with receipts, templates and suggestions</small>
       </div>
 
       <nav class="nav">
@@ -24,77 +27,122 @@
       </nav>
     </div>
 
-    <section class="panel">
-      <h3>New Entry</h3>
+    <section class="panel pro-form">
+      <div class="pro-form-grid">
 
-      <form id="entryForm">
-        <div class="grid">
+        <form id="entryForm" class="pro-form-main" autocomplete="off">
 
-          <label>
-            <span>Date</span>
-            <input type="date" id="date" required />
-          </label>
+          <div class="row">
+            <label>
+              <span>Date</span>
+              <input type="date" id="date" required />
+            </label>
 
-          <label>
-            <span>Flow (IN / OUT)</span>
-            <select id="flow" required>
-              <option value="IN">IN (Money In)</option>
-              <option value="OUT">OUT (Money Out)</option>
-            </select>
-          </label>
+            <label>
+              <span>Flow</span>
+              <select id="flow" required>
+                <option value="IN">IN (Money In)</option>
+                <option value="OUT">OUT (Money Out)</option>
+              </select>
+            </label>
 
-          <label>
-            <span>Amount (₹)</span>
-            <input type="number" id="amount" step="0.01" min="0.01" placeholder="0.00" required />
-          </label>
+            <label>
+              <span>Amount (₹)</span>
+              <input type="number" id="amount" step="0.01" min="0.01" placeholder="0.00" required />
+              <small id="amountWords" class="muted tiny"></small>
+            </label>
+          </div>
 
-          <label>
-            <span>Person (Entry Given By)</span>
-            <input type="text" id="person" placeholder="e.g., Rahul Sharma" />
-          </label>
+          <div class="row">
+            <label style="flex:1">
+              <span>Person</span>
+              <!-- datalist used as a lightweight searchable select -->
+              <input list="persons" id="person" placeholder="e.g., Rahul Sharma" />
+              <datalist id="persons"></datalist>
+            </label>
 
-          <label>
-            <span>Party Name</span>
-            <input type="text" id="party" placeholder="e.g., ABC Traders / Mr. Verma" />
-          </label>
+            <label style="flex:1">
+              <span>Party</span>
+              <input list="parties" id="party" placeholder="e.g., ABC Traders / Mr. Verma" />
+              <datalist id="parties"></datalist>
+            </label>
 
-          <label>
-            <span>Mode of Payment</span>
-            <select id="mode">
-              <option>Cash</option>
-              <option>UPI</option>
-              <option>Card</option>
-              <option>Bank Transfer</option>
-              <option>Cheque</option>
-              <option>Other</option>
-            </select>
-          </label>
+            <label style="flex:1">
+              <span>Mode</span>
+              <select id="mode">
+                <option>Cash</option>
+                <option>UPI</option>
+                <option>Card</option>
+                <option>Bank Transfer</option>
+                <option>Cheque</option>
+                <option>Other</option>
+              </select>
+            </label>
+          </div>
 
-          <label>
-            <span>Type / Category</span>
-            <select id="category"></select>
-          </label>
+          <div class="row">
+            <label style="flex:1.5">
+              <span>Type / Category</span>
+              <input list="categories" id="category" placeholder="Select or type category" />
+              <datalist id="categories"></datalist>
+            </label>
+
+            <label style="flex:1">
+              <span>Receipt (optional)</span>
+              <input type="file" id="receipt" accept="image/*,.pdf" />
+              <small class="muted tiny">Upload JPG/PNG or PDF. Max 5MB.</small>
+            </label>
+
+            <label style="flex:1">
+              <span>Attach Preview</span>
+              <div id="receiptPreview" class="receipt-preview">No file chosen</div>
+            </label>
+          </div>
 
           <label>
             <span>Remarks</span>
             <input type="text" id="remarks" placeholder="Optional remarks" />
           </label>
 
-        </div>
+          <div class="row actions-row">
+            <div style="display:flex;gap:8px;align-items:center">
+              <button type="submit" id="saveBtn">Save Entry</button>
+              <button type="button" id="saveTemplate" class="ghost">Save as Template</button>
+              <button type="button" id="clearDraft" class="ghost">Clear Draft</button>
+            </div>
 
-        <div class="actions">
-          <button type="submit">Save Entry</button>
-          <a class="ghost" href="entries.html">Go to Entries</a>
-        </div>
-      </form>
+            <div style="margin-left:auto;display:flex;gap:8px;align-items:center">
+              <small class="muted">Shortcuts: <kbd>Ctrl+Enter</kbd> save · <kbd>Esc</kbd> clear</small>
+            </div>
+          </div>
+
+        </form>
+
+        <aside class="pro-side">
+          <div class="panel small">
+            <h4>Recent Templates</h4>
+            <div id="templatesList" class="templates-list">No templates</div>
+          </div>
+
+          <div class="panel small">
+            <h4>Quick Info</h4>
+            <p class="muted tiny">Use templates to speed up repetitive entries. Uploaded receipts are stored in Supabase Storage and linked to the entry.</p>
+            <p class="muted tiny">Autosave preserves your draft locally.</p>
+          </div>
+
+        </aside>
+
+      </div>
     </section>
   </div>
 
-  <!-- ✅ Loader -->
+  <!-- Toast -->
+  <div id="toast" class="toast" aria-live="polite" aria-atomic="true"></div>
+
+  <!-- Loader -->
   <div class="app-loader" id="appLoader" aria-hidden="true">
     <div class="app-spinner" role="status" aria-label="Loading"></div>
   </div>
   <script type="module" src="js/loader.js" defer></script>
-
 </body>
 </html>

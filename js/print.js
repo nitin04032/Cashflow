@@ -1,28 +1,23 @@
-import {
-  INR, formatDate, computeOpeningBalance, sortAscForBalance,
-  getFilterFromURL, setFilterLabel, deriveRange, inRange
-} from "./utils.js";
-import { fetchEntries } from "./api.js"; // Updated to use fetchEntries from new API
-import { showLoader, hideLoader } from "./loader.js"; // Add loader functions
+import { INR, formatDate, computeOpeningBalance, sortAscForBalance, getFilterFromURL, setFilterLabel, deriveRange, inRange } from "./utils.js";
+import { fetchEntries } from "./api.js";
+import { showLoader, hideLoader } from "./loader.js";
 
-async function render() { // Made async
+async function render() {
   showLoader();
-
   const filter = getFilterFromURL();
   setFilterLabel(document.getElementById("filterLabel"), filter);
   const { from, to } = deriveRange(filter);
-  const flowFilter = filter.flow; // Check for flow filter passed from list.js
+  const flowFilter = filter.flow;
 
-  const all = await fetchEntries(); // Fetch all data from server
+  const all = await fetchEntries();
   let filtered = all.filter(e => inRange(e.date, from, to));
-  
   if (flowFilter && flowFilter !== "ALL") {
       filtered = filtered.filter(e => e.flow === flowFilter);
   }
 
   const opening = computeOpeningBalance(all, from);
 
-  const totalIn  = filtered.filter(e => e.flow === "IN").reduce((s,e)=>s+e.amount,0);
+  const totalIn  = filtered.filter(e => e.flow === "IN").reduce((s,e)=>s+e.amount,0);
   const totalOut = filtered.filter(e => e.flow === "OUT").reduce((s,e)=>s+e.amount,0);
   const net = totalIn - totalOut;
   const closing = opening + net;
@@ -39,19 +34,18 @@ async function render() { // Made async
     hideLoader();
     return;
   }
-  
-  // Table header to match list.html
+
   document.querySelector(".table-wrap table thead tr").innerHTML = `
     <th>Date</th>
     <th>Person</th>
-    <th>Party</th> <th>Mode</th>
+    <th>Party</th>
+    <th>Mode</th>
     <th>Flow</th>
     <th>Type/Category</th>
     <th class="right">Amount</th>
     <th>Remarks</th>
     <th class="right">Balance</th>
   `;
-
 
   let running = opening;
   const rows = sortAscForBalance(filtered).map(e => {
@@ -61,7 +55,8 @@ async function render() { // Made async
       <tr>
         <td>${formatDate(e.date)}</td>
         <td>${e.person || "—"}</td>
-        <td>${e.party || "—"}</td> <td>${e.mode || "—"}</td>
+        <td>${e.party || "—"}</td>
+        <td>${e.mode || "—"}</td>
         <td><span class="${badge}">${e.flow}</span></td>
         <td>${e.category || "—"}</td>
         <td class="right">${INR.format(e.amount)}</td>
@@ -77,7 +72,7 @@ async function render() { // Made async
 
 document.addEventListener("DOMContentLoaded", () => {
   render();
-  document.getElementById("doPrint").addEventListener("click", (e) => {
+  document.getElementById("doPrint")?.addEventListener("click", (e) => {
     e.preventDefault();
     window.print();
   });

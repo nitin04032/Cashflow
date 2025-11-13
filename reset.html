@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Reset Password — Cashflow</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="styles.css" />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script type="module" src="js/auth.js" defer></script>
+</head>
+<body>
+  <div class="container" style="max-width:640px;margin:48px auto;">
+    <section class="panel">
+      <h3>Reset your password</h3>
+      <p class="muted">If you arrived here from the password reset email, choose a new password below.</p>
+
+      <form id="resetForm" style="margin-top:12px">
+        <label>
+          <span>New password</span>
+          <input type="password" id="newPassword" required />
+        </label>
+        <label>
+          <span>Confirm password</span>
+          <input type="password" id="newPasswordConfirm" required />
+        </label>
+
+        <div style="display:flex;gap:8px;margin-top:12px">
+          <button id="resetSubmit" class="button">Set new password</button>
+          <div id="resetMsg" class="muted" style="margin-left:12px"></div>
+        </div>
+      </form>
+    </section>
+  </div>
+  <script type="module" src="js/loader.js" defer></script>
+</body>
+</html>
