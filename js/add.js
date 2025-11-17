@@ -1,4 +1,3 @@
-// js/add.js (Pro)
 import { todayISO } from "./utils.js";
 import { saveEntry, uploadReceipt } from "./api.js";
 import { showLoader, hideLoader } from "./loader.js";
@@ -21,6 +20,8 @@ const amountEl = document.getElementById("amount");
 const personEl = document.getElementById("person");
 const partyEl = document.getElementById("party");
 const modeEl = document.getElementById("mode");
+const firmEl = document.getElementById("firm");
+const firmWrapper = document.getElementById("firmWrapper");
 const categoryEl = document.getElementById("category");
 const remarksEl = document.getElementById("remarks");
 const receiptEl = document.getElementById("receipt");
@@ -100,6 +101,7 @@ function saveTemplate(){
     person: personEl.value,
     party: partyEl.value,
     mode: modeEl.value,
+    firm: firmEl.value,
     category: categoryEl.value,
     remarks: remarksEl.value
   };
@@ -117,9 +119,11 @@ function applyTemplate(idx){
   personEl.value = tpl.person || "";
   partyEl.value = tpl.party || "";
   modeEl.value = tpl.mode || "Cash";
+  firmEl.value = tpl.firm || "";
   categoryEl.value = tpl.category || "";
   remarksEl.value = tpl.remarks || "";
   populateDatalists();
+  handleModeVisibility();
   updateAmountWords();
   toast("Template applied");
 }
@@ -133,6 +137,7 @@ function saveDraft(){
     person: personEl.value,
     party: partyEl.value,
     mode: modeEl.value,
+    firm: firmEl.value,
     category: categoryEl.value,
     remarks: remarksEl.value
   };
@@ -147,6 +152,7 @@ function loadDraft(){
   personEl.value = d.person || "";
   partyEl.value = d.party || "";
   modeEl.value = d.mode || "Cash";
+  firmEl.value = d.firm || "";
   categoryEl.value = d.category || "";
   remarksEl.value = d.remarks || "";
 }
@@ -187,7 +193,22 @@ function validateForm(){
   if (!dateEl.value) errors.push("Date required");
   if (!(amt > 0)) errors.push("Amount must be > 0");
   if (!categoryEl.value) errors.push("Select a category");
+  // optional: if mode is Online and firm is visible, you can require firm selection
+  if (modeEl.value === 'Online' && firmWrapper.style.display !== 'none' && !firmEl.value) {
+    // comment out the next line if you don't want firm to be mandatory
+    // errors.push("Select firm for Online payments");
+  }
   return errors;
+}
+
+// show/hide firm field based on mode
+function handleModeVisibility(){
+  if (modeEl.value === 'Online'){
+    firmWrapper.style.display = '';
+  } else {
+    firmWrapper.style.display = 'none';
+    firmEl.value = '';
+  }
 }
 
 // --- events
@@ -197,14 +218,21 @@ document.addEventListener("DOMContentLoaded", () => {
   loadDraft();
   loadTemplates();
   updateAmountWords();
+  handleModeVisibility();
 
   // update categories when flow changes
   flowEl.addEventListener("change", () => {
     populateDatalists();
   });
 
+  // mode change shows/hides firm
+  modeEl.addEventListener("change", () => {
+    handleModeVisibility();
+    saveDraft();
+  });
+
   // autosave
-  [dateEl, flowEl, amountEl, personEl, partyEl, modeEl, categoryEl, remarksEl].forEach(el=>{
+  [dateEl, flowEl, amountEl, personEl, partyEl, modeEl, firmEl, categoryEl, remarksEl].forEach(el=>{
     el.addEventListener("input", () => { saveDraft(); updateAmountWords(); });
   });
 
@@ -258,6 +286,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const person = personEl.value.trim();
     const party = partyEl.value.trim();
     const mode = modeEl.value;
+    const firm = firmEl.value || null;
     const category = categoryEl.value;
     const remarks = remarksEl.value.trim();
 
@@ -285,12 +314,13 @@ document.addEventListener("DOMContentLoaded", () => {
       person,
       party,
       mode,
+      firm,
       category,
       remarks,
       receipt_url: receiptUrl
     };
 
-    // Save entry via Supabase (saveEntry should accept receipt_url)
+    // Save entry via Supabase (saveEntry should accept receipt_url and firm)
     const result = await saveEntry(newEntry);
 
     hideLoader();
@@ -309,6 +339,7 @@ document.addEventListener("DOMContentLoaded", () => {
       dateEl.value = todayISO();
       showReceiptPreview(null);
       updateAmountWords();
+      handleModeVisibility();
 
       toast("Saved successfully");
     } else {

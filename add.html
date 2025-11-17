@@ -69,13 +69,10 @@
 
             <label style="flex:1">
               <span>Mode</span>
+              <!-- changed to only Cash or Online as requested -->
               <select id="mode">
-                <option>Cash</option>
-                <option>UPI</option>
-                <option>Card</option>
-                <option>Bank Transfer</option>
-                <option>Cheque</option>
-                <option>Other</option>
+                <option value="Cash">Cash</option>
+                <option value="Online">Online</option>
               </select>
             </label>
           </div>
@@ -98,6 +95,17 @@
               <div id="receiptPreview" class="receipt-preview">No file chosen</div>
             </label>
           </div>
+
+          <!-- New field: Firm Name. It appears only when mode === 'Online' -->
+          <label id="firmWrapper" style="display:none;">
+            <span>Firm Name</span>
+            <select id="firm">
+              <option value="">-- Select firm --</option>
+              <option value="Moonsky">Moonsky</option>
+              <option value="Jindal">Jindal</option>
+            </select>
+            <small class="muted tiny">Shown only when Mode = Online</small>
+          </label>
 
           <label>
             <span>Remarks</span>
