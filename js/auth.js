@@ -1,4 +1,3 @@
-// js/auth.js
 import { SUPABASE_URL, SUPABASE_ANON_KEY } from "./config.js";
 
 if (!window?.supabase?.createClient) {
@@ -8,29 +7,24 @@ const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 // DOM
 const tabLogin = document.getElementById("tabLogin");
-const tabSignUp = document.getElementById("tabSignUp");
 const tabForgot = document.getElementById("tabForgot");
 const authForm = document.getElementById("authForm");
 const submitBtn = document.getElementById("submitBtn");
 const signOutBtn = document.getElementById("signOutBtn");
 const authMsg = document.getElementById("authMsg");
-const signupExtras = document.getElementById("signupExtras");
 const forgotView = document.getElementById("forgotView");
 
-let mode = "LOGIN"; // LOGIN | SIGNUP | FORGOT
+let mode = "LOGIN"; // LOGIN | FORGOT
 
 function setMode(m) {
   mode = m;
   if (tabLogin) tabLogin.className = m === "LOGIN" ? "button" : "ghost";
-  if (tabSignUp) tabSignUp.className = m === "SIGNUP" ? "button" : "ghost";
   if (tabForgot) tabForgot.className = m === "FORGOT" ? "button" : "ghost";
-  if (signupExtras) signupExtras.style.display = m === "SIGNUP" ? "block" : "none";
   if (forgotView) forgotView.style.display = m === "FORGOT" ? "block" : "none";
-  submitBtn.textContent = m === "LOGIN" ? "Sign in" : m === "SIGNUP" ? "Create account" : "Send reset email";
+  submitBtn.textContent = m === "LOGIN" ? "Sign in" : "Send reset email";
 }
 
 tabLogin?.addEventListener("click", () => setMode("LOGIN"));
-tabSignUp?.addEventListener("click", () => setMode("SIGNUP"));
 tabForgot?.addEventListener("click", () => setMode("FORGOT"));
 
 function showMsg(msg, isError = false) {
@@ -46,8 +40,6 @@ authForm?.addEventListener("submit", async (e) => {
 
   const email = document.getElementById("email").value?.trim();
   const password = document.getElementById("password").value;
-  const passwordConfirm = document.getElementById("passwordConfirm")?.value;
-  const fullName = document.getElementById("fullName")?.value?.trim();
 
   try {
     if (mode === "LOGIN") {
@@ -56,18 +48,8 @@ authForm?.addEventListener("submit", async (e) => {
       if (error) { showMsg(error.message || "Login failed", true); submitBtn.disabled = false; return; }
       showMsg("Signed in");
       const redirect = new URLSearchParams(location.search).get("redirect") || "index.html";
+      // redirect immediately
       setTimeout(() => location.href = redirect, 700);
-    } else if (mode === "SIGNUP") {
-      if (!email || !password) { showMsg("Email and password required", true); submitBtn.disabled = false; return; }
-      if (password !== passwordConfirm) { showMsg("Passwords do not match", true); submitBtn.disabled = false; return; }
-      const { data, error } = await supabase.auth.signUp({
-        email,
-        password,
-        options: { data: { full_name: fullName || null } }
-      });
-      if (error) { showMsg(error.message || "Sign up failed", true); submitBtn.disabled = false; return; }
-      showMsg("Sign up successful — check your email for confirmation (if enabled).");
-      setTimeout(() => setMode("LOGIN"), 1200);
     } else if (mode === "FORGOT") {
       if (!email) { showMsg("Enter your email", true); submitBtn.disabled = false; return; }
       const { data, error } = await supabase.auth.resetPasswordForEmail(email);
@@ -102,7 +84,7 @@ signOutBtn?.addEventListener("click", async () => {
   }
 })();
 
-/* Reset page handling */
+/* Reset page handling (unchanged) */
 async function handleResetPageIfPresent() {
   const resetForm = document.getElementById("resetForm");
   if (!resetForm) return;

@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <title>Cashflow — Login / Register</title>
+  <title>Cashflow — Login / Reset</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="stylesheet" href="styles.css" />
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
@@ -13,7 +13,7 @@
     <div class="header" style="align-items:flex-start">
       <div>
         <h1>🔐 Cashflow — Account</h1>
-        <small id="sub" class="muted">Sign in, create an account, or reset password</small>
+        <small id="sub" class="muted">Sign in or reset password</small>
       </div>
       <nav class="nav" style="margin-left:auto">
         <a href="index.html" class="ghost">Home</a>
@@ -25,12 +25,11 @@
       <div>
         <div style="display:flex;gap:8px;margin-bottom:12px">
           <button id="tabLogin" class="button">Login</button>
-          <button id="tabSignUp" class="ghost">Register</button>
           <button id="tabForgot" class="ghost">Forgot password</button>
         </div>
 
         <form id="authForm">
-          <!-- login/register fields -->
+          <!-- login fields -->
           <div id="commonFields">
             <label>
               <span>Email</span>
@@ -40,18 +39,6 @@
             <label id="passwordLabel">
               <span>Password</span>
               <input type="password" id="password" required autocomplete="current-password" />
-            </label>
-          </div>
-
-          <!-- Register-only -->
-          <div id="signupExtras" style="display:none">
-            <label>
-              <span>Confirm Password</span>
-              <input type="password" id="passwordConfirm" autocomplete="new-password" />
-            </label>
-            <label>
-              <span>Full name (optional)</span>
-              <input type="text" id="fullName" />
             </label>
           </div>
 
@@ -71,8 +58,8 @@
       <!-- Right column: info & social (optional) -->
       <aside>
         <div class="panel small">
-          <h4>Why create an account?</h4>
-          <p class="muted tiny">Accounts let you save entries, receipts and access your cashbook across devices. Use the same email to sign in anywhere.</p>
+          <h4>Need an account?</h4>
+          <p class="muted tiny">If you want to allow registrations later, re-add signup flow in <code>auth.js</code> and UI. For now accounts must be created by admin or via Supabase auth settings.</p>
         </div>
         <div class="panel small">
           <h4>Need help?</h4>
