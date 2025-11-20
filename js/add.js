@@ -7,6 +7,7 @@ const DRAFT_KEY = "cf_add_draft_v1";
 const PERSONS_KEY = "cf_persons_v1";
 const PARTIES_KEY = "cf_parties_v1";
 const TEMPLATES_KEY = "cf_templates_v1";
+const PERSON_CAT_MAP_KEY = "cf_person_cat_map_v1"; // Maps person -> last category
 
 // --- categories (same as before; you can populate datalist)
 const OUT_CATEGORIES = ["Bills Entry","Supplier Payment","Salaries","EMI","Daily Expenses","Tax Entry","Ads & Marketing","Cash Out Entry","Other"];
@@ -166,6 +167,25 @@ function addRecentPerson(name){
   arr.unshift(name);
   localStorage.setItem(PERSONS_KEY, JSON.stringify(arr.slice(0,20)));
 }
+
+// Update person->category mapping
+function updatePersonCategory(person, category) {
+  if (!person || !category) return;
+  const map = JSON.parse(localStorage.getItem(PERSON_CAT_MAP_KEY) || "{}");
+  map[person] = category;
+  localStorage.setItem(PERSON_CAT_MAP_KEY, JSON.stringify(map));
+}
+
+// Suggest category based on person
+function suggestCategory(person) {
+  if (!person || categoryEl.value) return; // don't overwrite if user already selected one
+  const map = JSON.parse(localStorage.getItem(PERSON_CAT_MAP_KEY) || "{}");
+  if (map[person]) {
+    categoryEl.value = map[person];
+    toast(`Category suggested: ${map[person]}`, { timeout: 2000 });
+  }
+}
+
 function addRecentParty(name){
   if (!name) return;
   const arr = JSON.parse(localStorage.getItem(PARTIES_KEY) || "[]");
@@ -234,6 +254,11 @@ document.addEventListener("DOMContentLoaded", () => {
   // autosave
   [dateEl, flowEl, amountEl, personEl, partyEl, modeEl, firmEl, categoryEl, remarksEl].forEach(el=>{
     el.addEventListener("input", () => { saveDraft(); updateAmountWords(); });
+  });
+
+  // Smart suggestion listener
+  personEl.addEventListener("blur", () => {
+    suggestCategory(personEl.value);
   });
 
   // template save
@@ -331,6 +356,7 @@ document.addEventListener("DOMContentLoaded", () => {
       // add to recents
       addRecentPerson(person);
       addRecentParty(party);
+      updatePersonCategory(person, category); // Save smart map
       populateDatalists();
 
       // clear form & draft

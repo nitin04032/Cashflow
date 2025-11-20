@@ -65,17 +65,17 @@ function formatRow(e, running) {
   const receiptIcon = e.receipt_url ? `<button class="ghost" data-receipt="${e.receipt_url}" title="View receipt">📎</button>` : "";
   return `
     <tr data-id="${e.id}">
-      <td><input type="checkbox" class="row-check" data-id="${e.id}" ${selected.has(e.id) ? 'checked' : ''}></td>
-      <td>${formatDate(e.date)}</td>
-      <td>${escapeHtml(e.person)||'—'}</td>
-      <td>${escapeHtml(e.party)||'—'}</td>
-      <td>${escapeHtml(e.mode)||'—'}</td>
-      <td><span class="${badge}">${e.flow}</span></td>
-      <td>${escapeHtml(e.category)||'—'}</td>
-      <td class="right">${money(e.amount)}</td>
-      <td>${escapeHtml(e.remarks)||'—'}</td>
-      <td class="right">${money(running)}</td>
-      <td class="no-print">
+      <td class="td-check"><input type="checkbox" class="row-check" data-id="${e.id}" ${selected.has(e.id) ? 'checked' : ''}></td>
+      <td data-label="Date">${formatDate(e.date)}</td>
+      <td data-label="Person">${escapeHtml(e.person)||'—'}</td>
+      <td data-label="Party">${escapeHtml(e.party)||'—'}</td>
+      <td data-label="Mode">${escapeHtml(e.mode)||'—'}</td>
+      <td data-label="Flow"><span class="${badge}">${e.flow}</span></td>
+      <td data-label="Category">${escapeHtml(e.category)||'—'}</td>
+      <td data-label="Amount" class="right">${money(e.amount)}</td>
+      <td data-label="Remarks">${escapeHtml(e.remarks)||'—'}</td>
+      <td data-label="Balance" class="right">${money(running)}</td>
+      <td data-label="Actions" class="no-print action-cell">
         <button class="ghost" data-view="${e.id}" title="View">View</button>
         <button class="ghost" data-edit="${e.id}" title="Edit">Edit</button>
         ${receiptIcon}
