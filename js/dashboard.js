@@ -1,5 +1,6 @@
 // js/dashboard.js (UPDATED)
 // Improved sizing, maintainAspectRatio=false, canvas pixel sizing, sparklines, and resize handling.
+// Added Recent Activity and real trend calculations.
 
 import { INR, todayISO, monthStartISO, monthEndISO } from "./utils.js";
 import { fetchEntries } from "./api.js";
@@ -109,7 +110,8 @@ function showNoDataOnCanvas(canvasId, text = "No data") {
   const ctx = c.getContext("2d");
   ctx.save();
   ctx.clearRect(0, 0, c.width, c.height);
-  ctx.fillStyle = "#64748b";
+  // Use theme color for no data text if possible, hardcoded for now but readable on both
+  ctx.fillStyle = "#94a3b8";
   // choose scaled font size (use device px)
   const fs = Math.max(12, Math.round((c.clientHeight || 160) * 0.12));
   ctx.font = `${fs}px system-ui, -apple-system, 'Segoe UI', Roboto`;
@@ -153,6 +155,29 @@ function buildCharts(filteredEntries, allEntries, rangeFrom = null) {
   // Destroy previous charts
   destroyCharts();
 
+  // Check if dark mode is active for chart colors
+  const isDark = document.documentElement.classList.contains('dark');
+  const gridColor = isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.06)';
+  const textColor = isDark ? '#e2e8f0' : '#64748b';
+
+  const commonOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
+    scales: {
+        x: {
+            grid: { color: gridColor, borderColor: gridColor },
+            ticks: { color: textColor }
+        },
+        y: {
+            grid: { color: gridColor, borderColor: gridColor },
+            ticks: { color: textColor }
+        }
+    },
+    plugins: {
+        legend: { labels: { color: textColor } }
+    }
+  };
+
   // Running balance chart
   const balanceCanvas = safeGet("balanceChart");
   if (!points.length) {
@@ -171,13 +196,12 @@ function buildCharts(filteredEntries, allEntries, rangeFrom = null) {
           borderWidth: 2,
           fill: true,
           pointRadius: 3,
-          backgroundColor: 'rgba(16,185,129,0.08)',
-          borderColor: 'rgba(16,185,129,0.9)'
+          backgroundColor: isDark ? 'rgba(52, 211, 153, 0.1)' : 'rgba(16,185,129,0.08)',
+          borderColor: isDark ? '#34d399' : '#10b981'
         }]
       },
       options: {
-        responsive: true,
-        maintainAspectRatio: false,
+        ...commonOptions,
         plugins: {
           tooltip: {
             callbacks: { label: ctx => `Balance: ${money(ctx.parsed.y)}` }
@@ -186,12 +210,14 @@ function buildCharts(filteredEntries, allEntries, rangeFrom = null) {
         },
         scales: {
           x: {
-            title: { display: true, text: "Date" },
-            ticks: { maxRotation: 0, autoSkip: true }
+            ...commonOptions.scales.x,
+            title: { display: true, text: "Date", color: textColor },
+            ticks: { ...commonOptions.scales.x.ticks, maxRotation: 0, autoSkip: true }
           },
           y: {
-            title: { display: true, text: "Balance (INR)" },
-            ticks: { callback: val => money(val) }
+             ...commonOptions.scales.y,
+            title: { display: true, text: "Balance (INR)", color: textColor },
+            ticks: { ...commonOptions.scales.y.ticks, callback: val => money(val) }
           }
         }
       }
@@ -208,20 +234,19 @@ function buildCharts(filteredEntries, allEntries, rangeFrom = null) {
       data: {
         labels: monthly.labels,
         datasets: [
-          { label: "IN", data: monthly.in, stack: "s1", backgroundColor: 'rgba(59,130,246,0.6)' },
-          { label: "OUT", data: monthly.out, stack: "s1", backgroundColor: 'rgba(248,113,113,0.6)' }
+          { label: "IN", data: monthly.in, stack: "s1", backgroundColor: isDark ? 'rgba(96, 165, 250, 0.7)' : 'rgba(59,130,246,0.6)' },
+          { label: "OUT", data: monthly.out, stack: "s1", backgroundColor: isDark ? 'rgba(248, 113, 113, 0.7)' : 'rgba(248,113,113,0.6)' }
         ]
       },
       options: {
-        responsive: true,
-        maintainAspectRatio: false,
+        ...commonOptions,
         plugins: {
           tooltip: { callbacks: { label: ctx => `${ctx.dataset.label}: ${money(ctx.parsed.y)}` } },
-          legend: { position: "top" }
+          legend: { ...commonOptions.plugins.legend, position: "top" }
         },
         scales: {
-          x: { stacked: true, title: { display: true, text: "Month" }, ticks: { maxRotation: 0 } },
-          y: { stacked: true, title: { display: true, text: "Amount (INR)" }, ticks: { callback: v => money(v) } }
+          x: { ...commonOptions.scales.x, stacked: true, title: { display: true, text: "Month", color: textColor }, ticks: { ...commonOptions.scales.x.ticks, maxRotation: 0 } },
+          y: { ...commonOptions.scales.y, stacked: true, title: { display: true, text: "Amount (INR)", color: textColor }, ticks: { ...commonOptions.scales.y.ticks, callback: v => money(v) } }
         }
       }
     });
@@ -239,7 +264,11 @@ function buildCharts(filteredEntries, allEntries, rangeFrom = null) {
       type: "doughnut",
       data: {
         labels: catLabels,
-        datasets: [{ data: catValues, backgroundColor: generatePalette(catValues.length) }]
+        datasets: [{
+            data: catValues,
+            backgroundColor: generatePalette(catValues.length),
+            borderColor: isDark ? '#1e293b' : '#fff'
+        }]
       },
       options: {
         responsive: true,
@@ -254,7 +283,7 @@ function buildCharts(filteredEntries, allEntries, rangeFrom = null) {
               }
             }
           },
-          legend: { position: "right", labels: { boxWidth: 12 } }
+          legend: { position: "right", labels: { boxWidth: 12, color: textColor } }
         }
       }
     });
@@ -297,9 +326,13 @@ function lastNDaysDates(n = 7) {
 function drawSparkInternal(canvasId, values) {
   const c = safeGet(canvasId);
   if (!c) return;
+  const isDark = document.documentElement.classList.contains('dark');
+  const strokeColor = isDark ? '#34d399' : '#10b981';
+  const fillColor = isDark ? 'rgba(52, 211, 153, 0.1)' : 'rgba(16,185,129,0.06)';
+
   // prefer external helper if present (index.html defines window.drawSpark)
   if (typeof window.drawSpark === "function") {
-    try { window.drawSpark(canvasId, values); return; } catch (e) { /* fallback below */ }
+    try { window.drawSpark(canvasId, values, strokeColor, fillColor); return; } catch (e) { /* fallback below */ }
   }
   // fallback: tiny canvas rendering
   try {
@@ -315,13 +348,53 @@ function drawSparkInternal(canvasId, values) {
       const y = h - ((v - min) / (max - min || 1)) * h;
       if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
     });
-    ctx.strokeStyle = '#10b981';
+    ctx.strokeStyle = strokeColor;
     ctx.lineWidth = 1.5;
     ctx.stroke();
     ctx.lineTo(w, h); ctx.lineTo(0, h); ctx.closePath();
-    ctx.fillStyle = 'rgba(16,185,129,0.06)';
+    ctx.fillStyle = fillColor;
     ctx.fill();
   } catch (e) { console.warn('spark fallback error', e); }
+}
+
+/* ---------- Recent Activity Helper ---------- */
+function renderRecentActivity(entries) {
+    const tbody = safeGet("recentActivityRows");
+    if (!tbody) return;
+
+    // Sort by date desc, then id desc
+    const sorted = [...entries].sort((a, b) => {
+        if (a.date !== b.date) return a.date > b.date ? -1 : 1;
+        return (b.id || 0) - (a.id || 0);
+    });
+
+    const recent = sorted.slice(0, 5);
+
+    if (recent.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="3" style="text-align:center;color:var(--muted)">No recent activity</td></tr>`;
+        return;
+    }
+
+    tbody.innerHTML = recent.map(e => {
+        const isIn = e.flow === "IN";
+        const colorClass = isIn ? "badge-in" : "badge-out"; // using badges might be too much, just use text color
+        // Actually, let's use text colors: green-600 vs red-600 equivalent
+        const amtColor = isIn ? "var(--green)" : "var(--red)";
+        const sign = isIn ? "+" : "-";
+
+        return `
+        <tr>
+            <td class="act-date">${e.date}</td>
+            <td>
+                <div class="act-main">${e.party || e.person || 'Unknown'}</div>
+                <span class="act-sub">${e.category || 'Uncategorized'}</span>
+            </td>
+            <td class="right" style="color:${amtColor};font-weight:600">
+                ${sign}${money(e.amount)}
+            </td>
+        </tr>
+        `;
+    }).join("");
 }
 
 /* ---------- Data refresh / UI ---------- */
@@ -334,6 +407,50 @@ function validateCustomRange() {
   if (!f || !t) return { ok: false, msg: "Select both From and To dates for custom range." };
   if (f > t) return { ok: false, msg: "From date cannot be after To date." };
   return { ok: true, from: f, to: t };
+}
+
+// Helper for calculating trend
+function calculateTrend(currentVal, previousVal) {
+    if (previousVal === 0) return { pct: 0, direction: 'neutral' };
+    const diff = currentVal - previousVal;
+    const pct = (diff / previousVal) * 100;
+    return {
+        pct: Math.abs(pct).toFixed(1),
+        direction: diff > 0 ? 'up' : (diff < 0 ? 'down' : 'neutral')
+    };
+}
+
+function updateTrendUI(id, trend, isInverse = false) {
+    const el = safeGet(id);
+    if (!el) return;
+
+    let icon = '—';
+    let colorClass = 'muted';
+
+    // For Money IN: Up is good (green), Down is bad (red)
+    // For Money OUT: Up is bad (red), Down is good (green) -> isInverse = true
+
+    if (trend.direction === 'up') {
+        icon = '↑';
+        colorClass = isInverse ? 'badge-out' : 'badge-in';
+    } else if (trend.direction === 'down') {
+        icon = '↓';
+        colorClass = isInverse ? 'badge-in' : 'badge-out';
+    }
+
+    // Override badge classes to just be text colors if preferred, but badges work okay
+    // Actually, let's just set color style directly to avoid background
+    const green = 'var(--green)';
+    const red = 'var(--red)';
+    const color = (trend.direction === 'up' && !isInverse) || (trend.direction === 'down' && isInverse) ? green : red;
+
+    if (trend.direction === 'neutral') {
+        el.style.color = 'var(--muted)';
+        el.textContent = '— 0%';
+    } else {
+        el.style.color = color;
+        el.textContent = `${icon} ${trend.pct}%`;
+    }
 }
 
 async function refresh() {
@@ -363,11 +480,20 @@ async function refresh() {
     if (from) filtered = filtered.filter(e => e.date >= from);
     if (to) filtered = filtered.filter(e => e.date <= to);
 
-    // summary cards
+    // --- Summary Cards Calculation ---
     const today = todayISO();
+    const yesterdayDate = new Date();
+    yesterdayDate.setDate(yesterdayDate.getDate() - 1);
+    const yesterday = yesterdayDate.toISOString().slice(0, 10);
+
     const todayRows = all.filter(e => e.date === today);
+    const yesterdayRows = all.filter(e => e.date === yesterday);
+
     const tdIn = todayRows.filter(e => e.flow === "IN").reduce((s, e) => s + e.amount, 0);
     const tdOut = todayRows.filter(e => e.flow === "OUT").reduce((s, e) => s + e.amount, 0);
+
+    const yestIn = yesterdayRows.filter(e => e.flow === "IN").reduce((s, e) => s + e.amount, 0);
+    const yestOut = yesterdayRows.filter(e => e.flow === "OUT").reduce((s, e) => s + e.amount, 0);
 
     const mFrom = monthStartISO(), mTo = monthEndISO();
     const monthRows = all.filter(e => e.date >= mFrom && e.date <= mTo);
@@ -379,6 +505,13 @@ async function refresh() {
     safeGet("moNet").textContent = money(moNet);
     safeGet("allNet").textContent = money(allNet);
     safeGet("allClosing").textContent = money(allNet);
+
+    // Trends
+    const trendIn = calculateTrend(tdIn, yestIn);
+    const trendOut = calculateTrend(tdOut, yestOut);
+
+    updateTrendUI("tdInChange", trendIn, false);
+    updateTrendUI("tdOutChange", trendOut, true);
 
     // small sparklines for top cards (last 7 days)
     try {
@@ -400,7 +533,13 @@ async function refresh() {
       drawSparkInternal("sparkTdOut", outVals);
       drawSparkInternal("sparkMoNet", netVals);
       drawSparkInternal("sparkAllNet", netVals);
+
+      // Last card is Closing Balance, let's give it a spark too (Net accumulation)
+      drawSparkInternal("sparkClosing", netVals);
     } catch (e) { console.warn("sparks draw error", e); }
+
+    // Render Recent Activity
+    renderRecentActivity(all);
 
     await buildCharts(filtered, all, from);
   } catch (err) {
@@ -456,14 +595,12 @@ document.addEventListener("DOMContentLoaded", () => {
     } catch (e) { /* ignore */ }
 
     // redraw small sparks (match their client sizes)
-    ['sparkTdIn','sparkTdOut','sparkMoNet','sparkAllNet'].forEach(id => {
-      const c = safeGet(id);
-      if (c) {
-        // attempt to redraw by triggering a refresh (cheap)
-        // we call refresh's spark routine by simply calling refresh sparklines only if entries cached? simplest: re-run refresh
-      }
+    ['sparkTdIn','sparkTdOut','sparkMoNet','sparkAllNet','sparkClosing'].forEach(id => {
+      // Trigger a refresh might be too expensive, let's just re-fetch values from global context if possible?
+      // Actually, for now let's rely on the fact that if they resize significantly, they might trigger refresh manually
+      // Or we can attach the data to the element and redraw.
+      // For this simple app, simply calling refresh() debounced would be better, but let's skip to avoid API spam.
     });
-    // For reliability, trigger a full refresh after resize debounce could be heavy; skip automatic full refresh here.
   });
 
   // initial
