@@ -10,6 +10,7 @@
   <!-- Chart.js -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
   <!-- App scripts -->
+  <script type="module" src="js/theme.js" defer></script>
   <script type="module" src="js/auth-guard.js" defer></script>
   <script type="module" src="js/dashboard.js" defer></script>
   <script type="module" src="js/loader.js" defer></script>
@@ -155,36 +156,61 @@
       </div>
     </section>
 
-    <!-- Charts -->
-    <section class="panel charts" aria-label="Financial charts">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
-        <h3>Financial Charts</h3>
-        <small class="muted">Interactive charts — hover for details</small>
-      </div>
+    <!-- Charts & Recent Activity Grid -->
+    <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 20px; align-items: start;" class="dash-grid-lg">
 
-      <div class="charts-grid">
-        <div class="chart-card" aria-label="Running balance chart">
-          <h4>Running Balance</h4>
-          <div class="chart-wrap">
-            <canvas id="balanceChart" aria-label="Running balance chart" role="img"></canvas>
-          </div>
+      <!-- Charts Column -->
+      <section class="panel charts" aria-label="Financial charts" style="min-width: 0;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+          <h3>Financial Charts</h3>
+          <small class="muted">Interactive charts — hover for details</small>
         </div>
 
-        <div class="chart-card" aria-label="Monthly IN/OUT chart">
-          <h4>Monthly IN / OUT (last 12 months)</h4>
-          <div class="chart-wrap">
-            <canvas id="monthlyChart" aria-label="Monthly in out chart" role="img"></canvas>
+        <div class="charts-grid">
+          <div class="chart-card" aria-label="Running balance chart">
+            <h4>Running Balance</h4>
+            <div class="chart-wrap">
+              <canvas id="balanceChart" aria-label="Running balance chart" role="img"></canvas>
+            </div>
           </div>
-        </div>
 
-        <div class="chart-card" aria-label="Category breakdown">
-          <h4>Category Breakdown</h4>
-          <div class="chart-wrap">
-            <canvas id="categoryChart" aria-label="Category breakdown chart" role="img"></canvas>
+          <div class="chart-card" aria-label="Monthly IN/OUT chart">
+            <h4>Monthly IN / OUT (last 12 months)</h4>
+            <div class="chart-wrap">
+              <canvas id="monthlyChart" aria-label="Monthly in out chart" role="img"></canvas>
+            </div>
+          </div>
+
+          <div class="chart-card" aria-label="Category breakdown">
+            <h4>Category Breakdown</h4>
+            <div class="chart-wrap">
+              <canvas id="categoryChart" aria-label="Category breakdown chart" role="img"></canvas>
+            </div>
           </div>
         </div>
-      </div>
-    </section>
+      </section>
+
+      <!-- Recent Activity Column -->
+      <section class="panel" aria-label="Recent Activity">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+          <h3 style="margin:0;border:none">Recent Activity</h3>
+          <a href="entries.html" class="ghost" style="padding: 4px 8px; font-size: 12px;">View All</a>
+        </div>
+        <table class="activity-table">
+          <tbody id="recentActivityRows">
+            <!-- Populated by JS -->
+            <tr><td colspan="3" style="text-align:center;color:var(--muted)">Loading...</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+    </div>
+
+    <style>
+      @media (max-width: 1000px) {
+        .dash-grid-lg { grid-template-columns: 1fr !important; }
+      }
+    </style>
 
     <!-- Quick Links -->
     <section class="panel no-print" aria-label="Quick links">
