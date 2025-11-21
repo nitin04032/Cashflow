@@ -11,6 +11,10 @@ let balanceChart = null, monthlyChart = null, categoryChart = null;
 /* ---------- Helpers ---------- */
 
 function ymFromDate(d) {
+  // if we already have a YYYY-MM-DD string, use it directly to avoid timezone shifting
+  if (typeof d === "string" && /^\d{4}-\d{2}/.test(d)) {
+    return d.slice(0, 7);
+  }
   const dt = new Date(d);
   return `${dt.getFullYear()}-${String(dt.getMonth() + 1).padStart(2, "0")}`;
 }
