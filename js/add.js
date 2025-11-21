@@ -211,6 +211,19 @@ function handleModeVisibility(){
   }
 }
 
+function updateFormTheme() {
+  const flow = flowEl.value;
+  const panel = document.querySelector(".pro-form");
+  if (!panel) return;
+  if (flow === "IN") {
+    panel.classList.remove("theme-out");
+    panel.classList.add("theme-in");
+  } else {
+    panel.classList.remove("theme-in");
+    panel.classList.add("theme-out");
+  }
+}
+
 // --- events
 document.addEventListener("DOMContentLoaded", () => {
   dateEl.value = todayISO();
@@ -219,10 +232,12 @@ document.addEventListener("DOMContentLoaded", () => {
   loadTemplates();
   updateAmountWords();
   handleModeVisibility();
+  updateFormTheme();
 
   // update categories when flow changes
   flowEl.addEventListener("change", () => {
     populateDatalists();
+    updateFormTheme();
   });
 
   // mode change shows/hides firm
@@ -247,7 +262,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // receipt change
   receiptEl.addEventListener("change", (e)=>{
-    showReceiptPreview(e.target.files[0]);
+    const file = e.target.files[0];
+    showReceiptPreview(file);
+    const label = document.getElementById("fileBtnText");
+    if (label) label.textContent = file ? file.name : "Choose File";
     saveDraft();
   });
 

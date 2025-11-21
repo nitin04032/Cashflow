@@ -87,8 +87,11 @@
 
             <label style="flex:1">
               <span>Receipt (optional)</span>
-              <input type="file" id="receipt" accept="image/*,.pdf" />
-              <small class="muted tiny">Upload JPG/PNG or PDF. Max 5MB.</small>
+              <div class="file-upload-wrap">
+                <input type="file" id="receipt" accept="image/*,.pdf" />
+                <div class="file-upload-btn" id="fileBtnText">Choose File</div>
+              </div>
+              <small class="muted tiny">Max 5MB</small>
             </label>
 
             <label style="flex:1">

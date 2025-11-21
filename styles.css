@@ -616,3 +616,40 @@ kbd{
 }
 .trend.up { color: var(--green); }
 .trend.down { color: var(--red); }
+
+/* Add Entry Enhancements */
+.theme-in { border-top: 4px solid var(--green) !important; }
+.theme-out { border-top: 4px solid var(--red) !important; }
+
+#amount { font-size: 1.25rem; font-weight: 600; }
+
+/* Custom file input */
+.file-upload-wrap {
+  position: relative;
+  display: inline-block;
+  width: 100%;
+}
+.file-upload-wrap input[type="file"] {
+  position: absolute;
+  left: 0; top: 0; width: 100%; height: 100%;
+  opacity: 0; cursor: pointer;
+}
+.file-upload-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
+  background: var(--input-bg);
+  border: 1px dashed var(--border);
+  border-radius: 8px;
+  color: var(--muted);
+  font-size: 14px;
+  transition: all 0.2s ease;
+  width: 100%;
+  text-align: center;
+}
+.file-upload-wrap:hover .file-upload-btn {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: var(--hover-bg);
+}

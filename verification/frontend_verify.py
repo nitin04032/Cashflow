@@ -1,24 +1,29 @@
 
 from playwright.sync_api import sync_playwright
 
-def verify_dashboard():
+def verify_add_page():
     with sync_playwright() as p:
         browser = p.chromium.launch(headless=True)
         page = browser.new_page()
 
-        # Navigate to the dashboard
-        page.goto("http://localhost:8080/index.html")
+        # Navigate to the add page
+        page.goto("http://localhost:8080/add.html")
 
-        # Wait for dashboard to load (check for header)
-        page.wait_for_selector("header")
+        # Wait for form
+        page.wait_for_selector("#entryForm")
 
-        # Wait a bit for charts to render (they might be empty but canvas should be there)
-        page.wait_for_timeout(2000)
+        # Wait a bit
+        page.wait_for_timeout(1000)
 
         # Take a screenshot
-        page.screenshot(path="/home/jules/verification/dashboard.png")
+        page.screenshot(path="/home/jules/verification/add_page.png")
+
+        # Also try changing flow to OUT and take another screenshot
+        page.select_option("#flow", "OUT")
+        page.wait_for_timeout(500)
+        page.screenshot(path="/home/jules/verification/add_page_out.png")
 
         browser.close()
 
 if __name__ == "__main__":
-    verify_dashboard()
+    verify_add_page()
