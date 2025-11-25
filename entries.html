@@ -1,5 +1,6 @@
 <!doctype html>
 <html lang="en">
+
 <head>
   <meta charset="utf-8" />
   <title>Cashflow — Entries (Pro)</title>
@@ -10,6 +11,7 @@
   <script type="module" src="js/list.js" defer></script>
   <script type="module" src="js/auth-guard.js" defer></script>
 </head>
+
 <body>
   <div class="container">
 
@@ -27,29 +29,29 @@
 
     <!-- Controls -->
     <section class="panel no-print" aria-label="Filters and actions">
-      <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center;">
-        <input id="q" placeholder="Search person / party / category / remarks..." style="flex:1;min-width:220px;padding:10px;border-radius:8px;border:1px solid var(--border)"/>
+      <div class="flex gap-4 items-center" style="flex-wrap:wrap;">
+        <input id="q" placeholder="Search person / party / category / remarks..." style="flex:1;min-width:220px;" />
 
-        <label>
-          <span class="muted tiny">Flow</span>
-          <select id="flowFilter" style="padding:8px;border-radius:8px;">
+        <label style="margin-bottom: 0;">
+          <span class="muted" style="font-size: 0.75rem;">Flow</span>
+          <select id="flowFilter">
             <option value="ALL">All</option>
             <option value="IN">IN</option>
             <option value="OUT">OUT</option>
           </select>
         </label>
 
-        <label>
-          <span class="muted tiny">From</span>
+        <label style="margin-bottom: 0;">
+          <span class="muted" style="font-size: 0.75rem;">From</span>
           <input type="date" id="fromDate" />
         </label>
-        <label>
-          <span class="muted tiny">To</span>
+        <label style="margin-bottom: 0;">
+          <span class="muted" style="font-size: 0.75rem;">To</span>
           <input type="date" id="toDate" />
         </label>
 
-        <label>
-          <span class="muted tiny">Rows</span>
+        <label style="margin-bottom: 0;">
+          <span class="muted" style="font-size: 0.75rem;">Rows</span>
           <select id="pageSize">
             <option>10</option>
             <option selected>25</option>
@@ -58,7 +60,7 @@
           </select>
         </label>
 
-        <div style="margin-left:auto;display:flex;gap:8px;align-items:center;">
+        <div style="margin-left:auto;" class="flex gap-2 items-center">
           <button id="exportCsv" class="ghost">Export CSV</button>
           <button id="bulkDelete" class="ghost danger" disabled>Delete Selected</button>
           <button id="clearFilters" class="ghost">Clear</button>
@@ -68,9 +70,10 @@
 
     <!-- Table & summary -->
     <section class="panel">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+      <div class="flex justify-between items-center mb-4">
         <h3>Entries</h3>
-        <div class="muted tiny">Showing <span id="shownCount">0</span> of <span id="totalCount">0</span></div>
+        <div class="muted" style="font-size: 0.85rem;">Showing <span id="shownCount">0</span> of <span
+            id="totalCount">0</span></div>
       </div>
 
       <div class="table-wrap pro-table" role="region" aria-label="Entries table">
@@ -78,15 +81,18 @@
           <thead>
             <tr>
               <th><input type="checkbox" id="selectAll" aria-label="Select all rows" /></th>
-              <th data-sort="date" class="sortable">Date <span class="sort-ind"></span></th>
-              <th data-sort="person" class="sortable">Person <span class="sort-ind"></span></th>
-              <th data-sort="party" class="sortable">Party <span class="sort-ind"></span></th>
-              <th data-sort="mode" class="sortable">Mode <span class="sort-ind"></span></th>
-              <th data-sort="flow" class="sortable">Flow <span class="sort-ind"></span></th>
-              <th data-sort="category" class="sortable">Category <span class="sort-ind"></span></th>
-              <th data-sort="amount" class="sortable right">Amount <span class="sort-ind"></span></th>
+              <th data-sort="date" class="sortable" style="cursor: pointer;">Date <span class="sort-ind"></span></th>
+              <th data-sort="person" class="sortable" style="cursor: pointer;">Person <span class="sort-ind"></span>
+              </th>
+              <th data-sort="party" class="sortable" style="cursor: pointer;">Party <span class="sort-ind"></span></th>
+              <th data-sort="mode" class="sortable" style="cursor: pointer;">Mode <span class="sort-ind"></span></th>
+              <th data-sort="flow" class="sortable" style="cursor: pointer;">Flow <span class="sort-ind"></span></th>
+              <th data-sort="category" class="sortable" style="cursor: pointer;">Category <span class="sort-ind"></span>
+              </th>
+              <th data-sort="amount" class="sortable right" style="cursor: pointer; text-align: right;">Amount <span
+                  class="sort-ind"></span></th>
               <th>Remarks</th>
-              <th class="right">Balance</th>
+              <th class="right" style="text-align: right;">Balance</th>
               <th class="no-print">Actions</th>
             </tr>
           </thead>
@@ -95,16 +101,16 @@
       </div>
 
       <!-- pagination -->
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-top:12px">
-        <div>
+      <div class="flex justify-between items-center mt-4">
+        <div class="flex gap-2">
           <button id="prevPage" class="ghost">Prev</button>
           <button id="nextPage" class="ghost">Next</button>
         </div>
-        <div class="muted tiny">Page <span id="curPage">1</span></div>
+        <div class="muted" style="font-size: 0.85rem;">Page <span id="curPage">1</span></div>
       </div>
     </section>
 
-    <footer class="footer no-print">
+    <footer class="footer no-print" style="text-align: center; color: var(--muted); margin-top: auto;">
       <small>Data stored in Supabase.</small>
     </footer>
 
@@ -141,4 +147,5 @@
   </div>
   <script type="module" src="js/loader.js" defer></script>
 </body>
+
 </html>

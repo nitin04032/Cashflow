@@ -5,7 +5,7 @@
   <title>Cashflow — Dashboard</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="stylesheet" href="styles.css" />
-  <!-- Supabase (kept for other scripts that need it) -->
+  <!-- Supabase -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
   <!-- Chart.js -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
@@ -22,7 +22,7 @@
     <header class="header" role="banner">
       <div>
         <h1>💸 Cashflow — Dashboard</h1>
-        <small class="muted">Overview of your cash book</small>
+        <small>Overview of your cash book</small>
       </div>
 
       <nav class="nav" role="navigation" aria-label="Main">
@@ -34,9 +34,9 @@
 
     <!-- Filters / Controls -->
     <section class="panel no-print" aria-label="Filters">
-      <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;">
-        <label style="display:flex;flex-direction:column;">
-          <span style="font-size:12px;color:#64748b">Range</span>
+      <div class="flex items-center gap-4" style="flex-wrap: wrap;">
+        <label>
+          <span>Range</span>
           <select id="dashRange" aria-label="Select range">
             <option value="MONTH">This Month</option>
             <option value="YEAR">Last 12 Months</option>
@@ -45,22 +45,24 @@
           </select>
         </label>
 
-        <label style="display:flex;flex-direction:column;">
-          <span style="font-size:12px;color:#64748b">From</span>
+        <label>
+          <span>From</span>
           <input type="date" id="dashFrom" aria-label="From date" />
         </label>
 
-        <label style="display:flex;flex-direction:column;">
-          <span style="font-size:12px;color:#64748b">To</span>
+        <label>
+          <span>To</span>
           <input type="date" id="dashTo" aria-label="To date" />
         </label>
 
-        <button id="dashApply" class="ghost">Apply</button>
-        <button id="dashReset" class="ghost">Reset</button>
+        <div class="flex gap-2" style="margin-top: 24px;">
+          <button id="dashApply" class="ghost">Apply</button>
+          <button id="dashReset" class="ghost">Reset</button>
+        </div>
 
-        <div style="margin-left:auto;display:flex;gap:8px;align-items:center;">
-          <label style="display:flex;flex-direction:column;align-items:flex-end;">
-            <span style="font-size:12px;color:#64748b">Show categories for</span>
+        <div style="margin-left:auto;" class="flex gap-2 items-center">
+          <label style="align-items: flex-end;">
+            <span>Show categories for</span>
             <select id="catFlow" aria-label="Show categories for">
               <option value="IN">IN</option>
               <option value="OUT">OUT</option>
@@ -74,7 +76,7 @@
     <!-- Top cards -->
     <section class="cards" aria-label="Top metrics">
       <!-- Card 1 -->
-      <div class="card card-metric" style="--card-index:0" role="group" aria-label="Today in">
+      <div class="card card-metric" role="group" aria-label="Today in">
         <div class="card-row">
           <div>
             <p class="card-label">Today (IN)</p>
@@ -91,7 +93,7 @@
       </div>
 
       <!-- Card 2 -->
-      <div class="card card-metric" style="--card-index:1" role="group" aria-label="Today out">
+      <div class="card card-metric" role="group" aria-label="Today out">
         <div class="card-row">
           <div>
             <p class="card-label">Today (OUT)</p>
@@ -108,7 +110,7 @@
       </div>
 
       <!-- Card 3 -->
-      <div class="card card-metric" style="--card-index:2" role="group" aria-label="This month net">
+      <div class="card card-metric" role="group" aria-label="This month net">
         <div class="card-row">
           <div>
             <p class="card-label">This Month (Net)</p>
@@ -124,7 +126,7 @@
       </div>
 
       <!-- Card 4 -->
-      <div class="card card-metric" style="--card-index:3" role="group" aria-label="All time net">
+      <div class="card card-metric" role="group" aria-label="All time net">
         <div class="card-row">
           <div>
             <p class="card-label">All-Time (Net)</p>
@@ -140,7 +142,7 @@
       </div>
 
       <!-- Card 5 -->
-      <div class="card card-metric" style="--card-index:4" role="group" aria-label="Closing balance">
+      <div class="card card-metric" role="group" aria-label="Closing balance">
         <div class="card-row">
           <div>
             <p class="card-label">All-Time Closing Balance</p>
@@ -157,11 +159,11 @@
     </section>
 
     <!-- Charts & Recent Activity Grid -->
-    <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 20px; align-items: start;" class="dash-grid-lg">
+    <div class="dash-grid-lg">
 
       <!-- Charts Column -->
       <section class="panel charts" aria-label="Financial charts" style="min-width: 0;">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+        <div class="flex justify-between items-center mb-4">
           <h3>Financial Charts</h3>
           <small class="muted">Interactive charts — hover for details</small>
         </div>
@@ -192,7 +194,7 @@
 
       <!-- Recent Activity Column -->
       <section class="panel" aria-label="Recent Activity">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+        <div class="flex justify-between items-center mb-4">
           <h3 style="margin:0;border:none">Recent Activity</h3>
           <a href="entries.html" class="ghost" style="padding: 4px 8px; font-size: 12px;">View All</a>
         </div>
@@ -206,24 +208,18 @@
 
     </div>
 
-    <style>
-      @media (max-width: 1000px) {
-        .dash-grid-lg { grid-template-columns: 1fr !important; }
-      }
-    </style>
-
     <!-- Quick Links -->
     <section class="panel no-print" aria-label="Quick links">
-      <h3 style="margin-top:0">Quick Links</h3>
-      <div class="actions">
-        <a class="ghost" href="entries.html?mode=TODAY">Open Today</a>
-        <a class="ghost" href="entries.html?mode=MONTH">Open This Month</a>
-        <a class="ghost" href="entries.html?mode=ALL">Open All Entries</a>
+      <h3>Quick Links</h3>
+      <div class="flex gap-4 flex-wrap mt-4">
+        <a class="button ghost" href="entries.html?mode=TODAY">Open Today</a>
+        <a class="button ghost" href="entries.html?mode=MONTH">Open This Month</a>
+        <a class="button ghost" href="entries.html?mode=ALL">Open All Entries</a>
         <button id="exportDash" class="ghost" style="margin-left:auto">Export Dashboard CSV</button>
       </div>
     </section>
 
-    <footer class="footer">
+    <footer class="footer" style="text-align: center; color: var(--muted); margin-top: auto;">
       <small>Data stored in Supabase.</small>
     </footer>
   </div>
@@ -253,11 +249,11 @@
           const y = h - ((v - min) / (max - min || 1)) * h;
           if (i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
         });
-        ctx.strokeStyle = '#10b981';
-        ctx.lineWidth = 1.6;
+        ctx.strokeStyle = '#4f46e5';
+        ctx.lineWidth = 2;
         ctx.stroke();
         ctx.lineTo(w,h); ctx.lineTo(0,h); ctx.closePath();
-        ctx.fillStyle = 'rgba(16,185,129,0.06)';
+        ctx.fillStyle = 'rgba(79, 70, 229, 0.1)';
         ctx.fill();
       } catch (e) { console.warn('drawSpark error', e); }
     };
