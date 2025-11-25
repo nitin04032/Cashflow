@@ -1,5 +1,6 @@
 <!doctype html>
 <html lang="en">
+
 <head>
   <meta charset="utf-8" />
   <title>Cashflow — Dashboard</title>
@@ -15,6 +16,7 @@
   <script type="module" src="js/dashboard.js" defer></script>
   <script type="module" src="js/loader.js" defer></script>
 </head>
+
 <body>
   <div class="container" id="app">
 
@@ -34,7 +36,7 @@
 
     <!-- Filters / Controls -->
     <section class="panel no-print" aria-label="Filters">
-      <div class="flex items-center gap-4" style="flex-wrap: wrap;">
+      <div class="flex items-end gap-4" style="flex-wrap: wrap;">
         <label>
           <span>Range</span>
           <select id="dashRange" aria-label="Select range">
@@ -55,7 +57,7 @@
           <input type="date" id="dashTo" aria-label="To date" />
         </label>
 
-        <div class="flex gap-2" style="margin-top: 24px;">
+        <div class="flex gap-2" style="margin-bottom: 16px;">
           <button id="dashApply" class="ghost">Apply</button>
           <button id="dashReset" class="ghost">Reset</button>
         </div>
@@ -201,7 +203,9 @@
         <table class="activity-table">
           <tbody id="recentActivityRows">
             <!-- Populated by JS -->
-            <tr><td colspan="3" style="text-align:center;color:var(--muted)">Loading...</td></tr>
+            <tr>
+              <td colspan="3" style="text-align:center;color:var(--muted)">Loading...</td>
+            </tr>
           </tbody>
         </table>
       </section>
@@ -234,25 +238,25 @@
 
   <!-- Small inline helper: sparkline drawer used by dashboard.js if present -->
   <script>
-    window.drawSpark = function(canvasId, values) {
+    window.drawSpark = function (canvasId, values) {
       try {
         const c = document.getElementById(canvasId);
         if (!c || !values || !values.length) return;
         const ctx = c.getContext('2d');
         const w = c.width = c.clientWidth; // make canvas pixel size match display
         const h = c.height = c.clientHeight || 36;
-        ctx.clearRect(0,0,w,h);
+        ctx.clearRect(0, 0, w, h);
         const max = Math.max(...values), min = Math.min(...values);
         ctx.beginPath();
-        values.forEach((v,i)=>{
-          const x = (i/(values.length-1 || 1))*w;
+        values.forEach((v, i) => {
+          const x = (i / (values.length - 1 || 1)) * w;
           const y = h - ((v - min) / (max - min || 1)) * h;
-          if (i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+          if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
         });
         ctx.strokeStyle = '#4f46e5';
         ctx.lineWidth = 2;
         ctx.stroke();
-        ctx.lineTo(w,h); ctx.lineTo(0,h); ctx.closePath();
+        ctx.lineTo(w, h); ctx.lineTo(0, h); ctx.closePath();
         ctx.fillStyle = 'rgba(79, 70, 229, 0.1)';
         ctx.fill();
       } catch (e) { console.warn('drawSpark error', e); }
@@ -260,8 +264,9 @@
 
     // Trigger a small resize event after load to help Chart.js compute sizes
     window.addEventListener('load', () => {
-      setTimeout(()=> window.dispatchEvent(new Event('resize')), 120);
+      setTimeout(() => window.dispatchEvent(new Event('resize')), 120);
     });
   </script>
 </body>
+
 </html>

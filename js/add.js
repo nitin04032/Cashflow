@@ -9,8 +9,8 @@ const PARTIES_KEY = "cf_parties_v1";
 const TEMPLATES_KEY = "cf_templates_v1";
 
 // --- categories (same as before; you can populate datalist)
-const OUT_CATEGORIES = ["Bills Entry","Supplier Payment","Salaries","EMI","Daily Expenses","Tax Entry","Ads & Marketing","Cash Out Entry","Other"];
-const IN_CATEGORIES  = ["Entry Bills","Received from B2C","Received from B2B","Cash Entry","Sales (Inflow)","Customer Payment","Refund Received","Investment / Capital","Loan Received","Other"];
+const OUT_CATEGORIES = ["Bills Entry", "Supplier Payment", "Salaries", "EMI", "Daily Expenses", "Tax Entry", "Ads & Marketing", "Cash Out Entry", "Other"];
+const IN_CATEGORIES = ["Entry Bills", "Received from B2C", "Received from B2B", "Cash Entry", "Sales (Inflow)", "Customer Payment", "Refund Received", "Investment / Capital", "Loan Received", "Other"];
 
 // element refs
 const form = document.getElementById("entryForm");
@@ -31,11 +31,11 @@ const saveBtn = document.getElementById("saveBtn");
 const templatesList = document.getElementById("templatesList");
 
 // helpers: toast
-function toast(message, opts={}) {
+function toast(message, opts = {}) {
   const root = document.getElementById("toast");
-  root.innerHTML = `<div class="msg ${opts.type==="error"?"error":""}">${message}</div>`;
+  root.innerHTML = `<div class="msg ${opts.type === "error" ? "error" : ""}">${message}</div>`;
   root.style.opacity = "1";
-  setTimeout(()=>{ root.innerHTML=""; }, opts.timeout || 4200);
+  setTimeout(() => { root.innerHTML = ""; }, opts.timeout || 4200);
 }
 
 // simple amount to words (INR) - supports up to crores. Light implementation.
@@ -43,18 +43,18 @@ function toWords(num) {
   if (!num && num !== 0) return "";
   num = Number(num);
   if (!isFinite(num)) return "";
-  const ones = ["","one","two","three","four","five","six","seven","eight","nine","ten","eleven","twelve","thirteen","fourteen","fifteen","sixteen","seventeen","eighteen","nineteen"];
-  const tens = ["","","twenty","thirty","forty","fifty","sixty","seventy","eighty","ninety"];
-  function w(n){
+  const ones = ["", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten", "eleven", "twelve", "thirteen", "fourteen", "fifteen", "sixteen", "seventeen", "eighteen", "nineteen"];
+  const tens = ["", "", "twenty", "thirty", "forty", "fifty", "sixty", "seventy", "eighty", "ninety"];
+  function w(n) {
     if (n < 20) return ones[n];
-    if (n < 100) return tens[Math.floor(n/10)] + (n%10 ? " "+ones[n%10] : "");
-    if (n < 1000) return ones[Math.floor(n/100)] + " hundred" + (n%100 ? " " + w(n%100) : "");
+    if (n < 100) return tens[Math.floor(n / 10)] + (n % 10 ? " " + ones[n % 10] : "");
+    if (n < 1000) return ones[Math.floor(n / 100)] + " hundred" + (n % 100 ? " " + w(n % 100) : "");
     return "";
   }
-  const crore = Math.floor(num/10000000);
-  const lakh = Math.floor((num%10000000)/100000);
-  const thousand = Math.floor((num%100000)/1000);
-  const remainder = Math.floor(num%1000);
+  const crore = Math.floor(num / 10000000);
+  const lakh = Math.floor((num % 10000000) / 100000);
+  const thousand = Math.floor((num % 100000) / 1000);
+  const remainder = Math.floor(num % 1000);
   let parts = [];
   if (crore) parts.push(w(crore) + " crore");
   if (lakh) parts.push(w(lakh) + " lakh");
@@ -68,32 +68,32 @@ function toWords(num) {
 }
 
 // populate datalists
-function populateDatalists(){
+function populateDatalists() {
   const catList = document.getElementById("categories");
   const list = (flowEl.value === "OUT") ? OUT_CATEGORIES : IN_CATEGORIES;
-  catList.innerHTML = list.map(c => `<option value="${c}"></option>`).join("");
+  catList.innerHTML = list.map(c => `<option value="${c}">${c}</option>`).join("");
 
   const persons = JSON.parse(localStorage.getItem(PERSONS_KEY) || "[]");
   const parties = JSON.parse(localStorage.getItem(PARTIES_KEY) || "[]");
-  document.getElementById("persons").innerHTML = persons.map(p=>`<option value="${p}"></option>`).join("");
-  document.getElementById("parties").innerHTML = parties.map(p=>`<option value="${p}"></option>`).join("");
+  document.getElementById("persons").innerHTML = persons.map(p => `<option value="${p}"></option>`).join("");
+  document.getElementById("parties").innerHTML = parties.map(p => `<option value="${p}"></option>`).join("");
 }
 
 // templates management
-function loadTemplates(){
+function loadTemplates() {
   const t = JSON.parse(localStorage.getItem(TEMPLATES_KEY) || "[]");
   templatesList.innerHTML = t.length ? t.map((temp, idx) =>
-    `<button data-idx="${idx}">${temp.flow} • ${temp.category} • ${temp.amount} <small class="muted">— ${temp.person || ''} ${temp.party? '/ '+temp.party : ''}</small></button>`
+    `<button data-idx="${idx}">${temp.flow} • ${temp.category} • ${temp.amount} <small class="muted">— ${temp.person || ''} ${temp.party ? '/ ' + temp.party : ''}</small></button>`
   ).join("") : "No templates";
   // attach handlers
-  templatesList.querySelectorAll("button[data-idx]").forEach(btn=>{
-    btn.addEventListener("click", ()=>{
+  templatesList.querySelectorAll("button[data-idx]").forEach(btn => {
+    btn.addEventListener("click", () => {
       const idx = Number(btn.getAttribute("data-idx"));
       applyTemplate(idx);
     });
   });
 }
-function saveTemplate(){
+function saveTemplate() {
   const t = JSON.parse(localStorage.getItem(TEMPLATES_KEY) || "[]");
   const tpl = {
     flow: flowEl.value,
@@ -106,11 +106,11 @@ function saveTemplate(){
     remarks: remarksEl.value
   };
   t.unshift(tpl);
-  localStorage.setItem(TEMPLATES_KEY, JSON.stringify(t.slice(0,20)));
+  localStorage.setItem(TEMPLATES_KEY, JSON.stringify(t.slice(0, 20)));
   loadTemplates();
   toast("Template saved");
 }
-function applyTemplate(idx){
+function applyTemplate(idx) {
   const t = JSON.parse(localStorage.getItem(TEMPLATES_KEY) || "[]");
   const tpl = t[idx];
   if (!tpl) return;
@@ -129,7 +129,7 @@ function applyTemplate(idx){
 }
 
 // autosave / draft
-function saveDraft(){
+function saveDraft() {
   const draft = {
     date: dateEl.value,
     flow: flowEl.value,
@@ -143,7 +143,7 @@ function saveDraft(){
   };
   localStorage.setItem(DRAFT_KEY, JSON.stringify(draft));
 }
-function loadDraft(){
+function loadDraft() {
   const d = JSON.parse(localStorage.getItem(DRAFT_KEY) || "null");
   if (!d) return;
   dateEl.value = d.date || todayISO();
@@ -158,25 +158,25 @@ function loadDraft(){
 }
 
 // maintain recent persons/parties
-function addRecentPerson(name){
+function addRecentPerson(name) {
   if (!name) return;
   const arr = JSON.parse(localStorage.getItem(PERSONS_KEY) || "[]");
   const idx = arr.indexOf(name);
-  if (idx !== -1) arr.splice(idx,1);
+  if (idx !== -1) arr.splice(idx, 1);
   arr.unshift(name);
-  localStorage.setItem(PERSONS_KEY, JSON.stringify(arr.slice(0,20)));
+  localStorage.setItem(PERSONS_KEY, JSON.stringify(arr.slice(0, 20)));
 }
-function addRecentParty(name){
+function addRecentParty(name) {
   if (!name) return;
   const arr = JSON.parse(localStorage.getItem(PARTIES_KEY) || "[]");
   const idx = arr.indexOf(name);
-  if (idx !== -1) arr.splice(idx,1);
+  if (idx !== -1) arr.splice(idx, 1);
   arr.unshift(name);
-  localStorage.setItem(PARTIES_KEY, JSON.stringify(arr.slice(0,20)));
+  localStorage.setItem(PARTIES_KEY, JSON.stringify(arr.slice(0, 20)));
 }
 
 // receipt preview
-function showReceiptPreview(file){
+function showReceiptPreview(file) {
   if (!file) { previewEl.textContent = "No file chosen"; return; }
   if (file.type.startsWith("image/")) {
     const url = URL.createObjectURL(file);
@@ -187,7 +187,7 @@ function showReceiptPreview(file){
 }
 
 // validation
-function validateForm(){
+function validateForm() {
   const errors = [];
   const amt = parseFloat(amountEl.value || "0");
   if (!dateEl.value) errors.push("Date required");
@@ -202,8 +202,8 @@ function validateForm(){
 }
 
 // show/hide firm field based on mode
-function handleModeVisibility(){
-  if (modeEl.value === 'Online'){
+function handleModeVisibility() {
+  if (modeEl.value === 'Online') {
     firmWrapper.style.display = '';
   } else {
     firmWrapper.style.display = 'none';
@@ -232,7 +232,7 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   // autosave
-  [dateEl, flowEl, amountEl, personEl, partyEl, modeEl, firmEl, categoryEl, remarksEl].forEach(el=>{
+  [dateEl, flowEl, amountEl, personEl, partyEl, modeEl, firmEl, categoryEl, remarksEl].forEach(el => {
     el.addEventListener("input", () => { saveDraft(); updateAmountWords(); });
   });
 
@@ -246,13 +246,13 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   // receipt change
-  receiptEl.addEventListener("change", (e)=>{
+  receiptEl.addEventListener("change", (e) => {
     showReceiptPreview(e.target.files[0]);
     saveDraft();
   });
 
   // keyboard shortcuts
-  document.addEventListener("keydown", (e)=>{
+  document.addEventListener("keydown", (e) => {
     if ((e.ctrlKey || e.metaKey) && e.key === "Enter") {
       e.preventDefault();
       form.requestSubmit();
@@ -270,7 +270,7 @@ document.addEventListener("DOMContentLoaded", () => {
   amountEl.addEventListener("input", updateAmountWords);
 
   // submit handler
-  form.addEventListener("submit", async (ev)=>{
+  form.addEventListener("submit", async (ev) => {
     ev.preventDefault();
 
     const errs = validateForm();
@@ -303,7 +303,7 @@ document.addEventListener("DOMContentLoaded", () => {
         receiptUrl = up.url;
       } else {
         // optional: continue without receipt or abort
-        toast("Receipt upload failed: " + (up.message || "error"), { type:"error" });
+        toast("Receipt upload failed: " + (up.message || "error"), { type: "error" });
       }
     }
 
@@ -349,7 +349,7 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 // utility: update amount words display
-function updateAmountWords(){
+function updateAmountWords() {
   const val = amountEl.value;
   if (!val) { amountWordsEl.textContent = ""; return; }
   amountWordsEl.textContent = toWords(val);

@@ -29,10 +29,12 @@
 
     <!-- Controls -->
     <section class="panel no-print" aria-label="Filters and actions">
-      <div class="flex gap-4 items-center" style="flex-wrap:wrap;">
-        <input id="q" placeholder="Search person / party / category / remarks..." style="flex:1;min-width:220px;" />
+      <div class="flex gap-4 items-end" style="flex-wrap:wrap;">
+        <div style="flex:1; min-width:220px; margin-bottom: 16px;">
+          <input id="q" placeholder="Search person / party / category / remarks..." style="width: 100%;" />
+        </div>
 
-        <label style="margin-bottom: 0;">
+        <label style="margin-bottom: 16px;">
           <span class="muted" style="font-size: 0.75rem;">Flow</span>
           <select id="flowFilter">
             <option value="ALL">All</option>
@@ -41,16 +43,16 @@
           </select>
         </label>
 
-        <label style="margin-bottom: 0;">
+        <label style="margin-bottom: 16px;">
           <span class="muted" style="font-size: 0.75rem;">From</span>
           <input type="date" id="fromDate" />
         </label>
-        <label style="margin-bottom: 0;">
+        <label style="margin-bottom: 16px;">
           <span class="muted" style="font-size: 0.75rem;">To</span>
           <input type="date" id="toDate" />
         </label>
 
-        <label style="margin-bottom: 0;">
+        <label style="margin-bottom: 16px;">
           <span class="muted" style="font-size: 0.75rem;">Rows</span>
           <select id="pageSize">
             <option>10</option>
@@ -60,7 +62,7 @@
           </select>
         </label>
 
-        <div style="margin-left:auto;" class="flex gap-2 items-center">
+        <div style="margin-left:auto; margin-bottom: 16px;" class="flex gap-2 items-center">
           <button id="exportCsv" class="ghost">Export CSV</button>
           <button id="bulkDelete" class="ghost danger" disabled>Delete Selected</button>
           <button id="clearFilters" class="ghost">Clear</button>
